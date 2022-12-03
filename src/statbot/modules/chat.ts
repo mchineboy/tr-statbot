@@ -85,6 +85,26 @@ export default class ChatListener {
             );
             console.log(`User ${message.uid} opted out.`);
             break;
+            case ":status": 
+            this.mongo.checkStatus(message.uid).then((user) => {
+                if (user && user.optin) {
+                    this.pushChatMsg(
+                        {
+                            username: this.chatConfig.username,
+                            msg: `${message.username}, you are opted in to the statistics system.`,
+                        },
+                        this.chatConfig.user
+                    );
+                } else {
+                    this.pushChatMsg(
+                        {
+                            username: this.chatConfig.username,
+                            msg: `${message.username}, you are opted out of the statistics system.`,
+                        },
+                        this.chatConfig.user
+                    );
+                }
+            });
         }
         if (message.msg.match(/:(\w+)$/)) {
           snapshot.ref.remove();

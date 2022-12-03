@@ -14,6 +14,10 @@ export default class MongoDB {
         this.client = await mongoose.connect(process.env.MONGODB_URI!);
     }
 
+    async checkStatus(uid:string) {
+        return await User.findOne({ uid });
+    }
+
     async getUser(uid: string, optin: boolean) {
         return User.findOne({ uid, optin });
     }

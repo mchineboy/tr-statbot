@@ -24,23 +24,22 @@ export default class PlayerListener {
     const playing = this.fbase.ref("songhistory");
     playing.on("value", async (snapshot) => {
       const message = snapshot.val();
-      const isPatron = this.patrons.some(
-        (patron) =>
-          patron.user && patron.user.uid && patron.user.uid === message.uid
-      );
-      if (isPatron) {
-        console.log(`Patron ${message.uid} song detected.`, message);
-        this.mongo.getUser(message.uid, true).then((user) => {
-            if (user) {
-              this.mongo.storePlayer(
-                message.uid,
-                Date.now() / 1000,
-                message).then((user) => {
-                console.log(`Inserted ID ${user._id} played: ${JSON.stringify(message, undefined, 2)}`);
-              });
-            }
-          });
-      }
+
+      this.mongo.getUser(message.uid, true).then((user) => {
+        if (user) {
+          this.mongo
+            .storePlayer(message.uid, Date.now() / 1000, message)
+            .then((user) => {
+              console.log(
+                `Inserted ID ${user._id} played: ${JSON.stringify(
+                  message,
+                  undefined,
+                  2
+                )}`
+              );
+            });
+        }
+      });
     });
   }
 }
