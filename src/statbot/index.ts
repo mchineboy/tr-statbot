@@ -17,9 +17,9 @@ export default async function main() {
   );
 
   const firebase = new Firebase();
-    var database: any
+  var database: any;
   try {
-     database = firebase.fbase.database();
+    database = firebase.fbase.database();
   } catch (error) {
     console.error(error);
   }
@@ -31,33 +31,86 @@ export default async function main() {
   }, 1000 * 60 * 60);
 
   console.log(`Starting Chat Listener`);
-  const chat = new ChatListener(database, patrons, patronObservable).run();
+  const chat = new ChatListener(
+    firebase,
+    database,
+    patrons,
+    patronObservable
+  ).run();
   console.log(`Starting Presence Listener`);
-  const presence = new PresenceListener(database, patrons, patronObservable).run();
+  const presence = new PresenceListener(
+    database,
+    patrons,
+    patronObservable
+  ).run();
   console.log(`Starting Player Listener`);
   const playing = new PlayerListener(database, patrons, patronObservable).run();
 }
 
 async function updatePatrons(firebase: Firebase) {
   var patrons: any[] = [];
-  const newPatrons = [];
+  const newPatrons: { [key: string]: any }[] = [];
   const patreon = new Patreon();
   try {
     patrons = await patreon.getPatrons();
 
+    const fbpatronsref = await firebase.fbase
+      .database()
+      .ref("patreon")
+      .once("value");
+
+    const fbpatrons = fbpatronsref.val();
+
+    for (const patron of Object.keys(fbpatrons)) {
+      if (fbpatrons[patron] === true) {
+        newPatrons.push({
+          user: {
+            uid: patron,
+          },
+        });
+      }
+    }
+    console.log(newPatrons);
+    const usernames = await firebase.fbase
+      .database()
+      .ref("usernames")
+      .once("value");
+
+    const usernamesObj = usernames.val();
+
+    const uidsByUsernames = Object.keys(usernamesObj).reduce(
+      (acc: { [key: string]: string }, key: string) => {
+        acc[usernamesObj[key].toUpperCase()] = key;
+        return acc;
+      },
+      {}
+    );
+
     for (const patron of patrons) {
-      console.log(patron.emailAddress);
       const auth = firebase.fbase.auth();
       try {
-        const user = await auth.getUserByEmail(patron.emailAddress);
-        newPatrons.push({patron, user});
+        if (uidsByUsernames[patron.displayName.trim().toUpperCase()]) {
+          const user = await auth.getUser(
+            uidsByUsernames[patron.displayName.trim().toUpperCase()]
+          );
+          newPatrons.push({ patron, user });
+          console.log(
+            `Found user ${user.uid} for patron ${patron.displayName}`
+          );
+        }
       } catch (error) {
         console.error(error);
-        newPatrons.push({patron, user: null});
+        try {
+          const user = await auth.getUserByEmail(patron.emailAddress);
+          newPatrons.push({ patron, user });
+          console.log(
+            `Found user ${user.uid} for patron ${patron.displayName}`
+          );
+        } catch (error) {
+          console.error(error);
+        }
       }
-    };
-
-    console.log(`Patrons: `, newPatrons);
+    }
   } catch (error) {
     console.error(error);
   }

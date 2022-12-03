@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "firebase-admin": "^11.3.0",
+    "mongoose": "^6.7.5",
     "observable-slim": "^0.1.6"
   },
   "scripts": {

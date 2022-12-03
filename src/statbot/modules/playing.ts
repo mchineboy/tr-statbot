@@ -1,27 +1,46 @@
 import { Database } from "firebase-admin/lib/database/database";
 import ObservableSlim from "observable-slim";
+import MongoDB from "../../lib/mongodb";
 
 export default class PlayerListener {
-    fbase: Database;
-    patrons: any[];
+  fbase: Database;
+  patrons: any[];
+  mongo: MongoDB;
 
-    constructor(fbase: Database, patrons: any[], patronObservable: ProxyConstructor) {
-        this.fbase = fbase;
-        this.patrons = patrons;
-        ObservableSlim.observe(patronObservable, (changes: any) => {
-            this.patrons = changes.target;
-        })
-    }
+  constructor(
+    fbase: Database,
+    patrons: any[],
+    patronObservable: ProxyConstructor
+  ) {
+    this.fbase = fbase;
+    this.patrons = patrons;
+    ObservableSlim.observe(patronObservable, (changes: any) => {
+      this.patrons = changes.target;
+    });
+    this.mongo = new MongoDB();
+  }
 
-    async run() {
-        const playing = this.fbase.ref("songhistory");
-        playing.on("value", async (snapshot) => {
-            const message = snapshot.val();
-            const isPatron = this.patrons.some((patron) => patron.user && patron.user.uid && patron.user.uid === message.uid);
-            if (isPatron) {
-                console.log(`Patron ${message.uid} played a song: ${message.songObj.title}`, message);
+  async run() {
+    const playing = this.fbase.ref("songhistory");
+    playing.on("value", async (snapshot) => {
+      const message = snapshot.val();
+      const isPatron = this.patrons.some(
+        (patron) =>
+          patron.user && patron.user.uid && patron.user.uid === message.uid
+      );
+      if (isPatron) {
+        console.log(`Patron ${message.uid} song detected.`, message);
+        this.mongo.getUser(message.uid, true).then((user) => {
+            if (user) {
+              this.mongo.storePlayer(
+                message.uid,
+                Date.now() / 1000,
+                message).then((user) => {
+                console.log(`Inserted ID ${user._id} played: ${JSON.stringify(message, undefined, 2)}`);
+              });
             }
-        });
-    }
-
+          });
+      }
+    });
+  }
 }

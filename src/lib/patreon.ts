@@ -10,7 +10,15 @@ export default class PatreonAPI {
     })
 
     var patrons = await Patreon.FetchPatrons(['active_patron']);
-      
+
+    console.log(patrons.length);
+    Patreon.Authorization({
+      AccessToken: process.env.OF_PATREON_TOKEN!,
+      CampaignID: process.env.OF_CAMPAIGN_ID!,
+    })
+
+    patrons = patrons.concat(await Patreon.FetchPatrons(['active_patron']));
+    console.log(patrons.length);
     return patrons;
   }
 }
