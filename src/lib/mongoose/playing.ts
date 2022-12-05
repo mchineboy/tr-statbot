@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
+import {getTotalPlayingHours} from './stats/played';
 
 const Schema = mongoose.Schema;
 
-const playingSchema = new Schema({
+export const playingSchema = new Schema({
     uid: String,
     timestamp: Number,
     song: {
@@ -26,5 +27,7 @@ const playingSchema = new Schema({
         "username": String,
       }
 });
+
+export const totalPlayingHours = getTotalPlayingHours;
 
 export default mongoose.model('playing', playingSchema);

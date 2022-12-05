@@ -24,15 +24,15 @@ export default class PlayerListener {
     const playing = this.fbase.ref("songhistory");
     playing.on("value", async (snapshot) => {
       const message = snapshot.val();
-
-      this.mongo.getUser(message.uid, true).then((user) => {
+      console.log(`[PlayerListener] ${JSON.stringify(message[0], undefined, 2)}`);
+      this.mongo.getUser(message[0].uid, true).then((user) => {
         if (user) {
           this.mongo
-            .storePlayer(message.uid, Date.now() / 1000, message)
+            .storePlayer(message[0].uid, Date.now() / 1000, message[0])
             .then((user) => {
               console.log(
                 `Inserted ID ${user._id} played: ${JSON.stringify(
-                  message,
+                  message[0],
                   undefined,
                   2
                 )}`

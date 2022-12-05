@@ -2,6 +2,7 @@ import { Database } from "firebase-admin/lib/database/database";
 import ObservableSlim from "observable-slim";
 import type Firebase from "../../lib/firebase";
 import MongoDB from "../../lib/mongodb";
+import { isCommand } from "./commands";
 
 export default class ChatListener {
   fbase: Database;
@@ -32,91 +33,33 @@ export default class ChatListener {
   async run() {
     const chat = this.fbase.ref("chat");
     chat.on("child_added", async (snapshot) => {
-      const message = snapshot.val();
+      var message = snapshot.val();
+      
+      console.log((Date.now()/1000) - message.timestamp )
+      // Initial dumps a shitton of messages
+      if ( (Date.now()/1000) - message.timestamp  > 30 ) return;
 
+      console.log(`[ChatListener] ${JSON.stringify(message, undefined, 2)}`);
+     if (!message) return;
       const isPatron = this.patrons.some(
         (patron) =>
           patron.user && patron.user.uid && patron.user.uid === message.uid
       );
 
       if (!isPatron) {
+        console.log(`[ChatListener] Ignoring non-patron message: ${message.msg}`);
         return;
       }
 
-      if (message.msg.startsWith(":")) {
-        switch (message.msg) {
-          case ":ping":
-            this.pushChatMsg(
-              {
-                username: this.chatConfig.username,
-                msg: "pong",
-              },
-              this.chatConfig.user
-            );
-            break;
-          case ":pong":
-            this.pushChatMsg(
-              {
-                username: this.chatConfig.username,
-                msg: "ping",
-              },
-              this.chatConfig.user
-            );
-            break;
-          case ":optin":
-            this.mongo.storeUser(message.uid, true);
-            this.pushChatMsg(
-                {
-                    username: this.chatConfig.username,
-                    msg: `${message.username}, you have opted in to the statistics system. Note: This is a patreon perk. If you are not a patron, you will be opted out in 24 hours.`,
-                },
-                this.chatConfig.user
-            );
-            console.log(`User ${message.uid} opted in.`);
-            break;
-          case ":optout":
-            this.mongo.storeUser(message.uid, false);
-            this.pushChatMsg(
-                {
-                    username: this.chatConfig.username,
-                    msg: "You have opted in to the statistics system.",
-                },
-                this.chatConfig.user
-            );
-            console.log(`User ${message.uid} opted out.`);
-            break;
-            case ":status": 
-            this.mongo.checkStatus(message.uid).then((user) => {
-                if (user && user.optin) {
-                    this.pushChatMsg(
-                        {
-                            username: this.chatConfig.username,
-                            msg: `${message.username}, you are opted in to the statistics system.`,
-                        },
-                        this.chatConfig.user
-                    );
-                } else {
-                    this.pushChatMsg(
-                        {
-                            username: this.chatConfig.username,
-                            msg: `${message.username}, you are opted out of the statistics system.`,
-                        },
-                        this.chatConfig.user
-                    );
-                }
-            });
-        }
-        if (message.msg.match(/:(\w+)$/)) {
-          snapshot.ref.remove();
-        }
-        this.mongo
-          .getUser(message.uid, true)
-          .then((user) => {
-            if (user) {
-              this.mongo.storeChat(message.uid, message.timestamp);          
-            }
-          });
+      if (isCommand(this, message)) {
+        return;
       }
+
+      this.mongo.getUser(message.uid, true).then((user) => {
+        if (user) {
+          this.mongo.storeChat(message.uid, message.timestamp);
+        }
+      });
     });
   }
 
@@ -151,7 +94,7 @@ export default class ChatListener {
   }
 }
 
-interface ChatMessage {
+export interface ChatMessage {
   user?: any;
   username: string;
   msg: string;

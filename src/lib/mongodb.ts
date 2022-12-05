@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import User from "./mongoose/users";
 import Chat from "./mongoose/chat";
 import Presence from "./mongoose/presence";
-import Player from "./mongoose/playing";
+import Player, { totalPlayingHours } from "./mongoose/playing";
 
 export default class MongoDB {
     client?: mongoose.Mongoose
@@ -40,5 +40,9 @@ export default class MongoDB {
     async storePlayer(uid: string, timestamp: number, song: any) {
         const player = new Player({ uid, timestamp, song });
         return player.save();
+    }
+
+    async playingHours(uid: string) {
+        return await totalPlayingHours(uid);
     }
 }

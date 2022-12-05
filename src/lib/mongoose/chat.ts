@@ -8,3 +8,4 @@ const chatSchema = new Schema({
 });
 
 export default mongoose.model('chat', chatSchema);
+
