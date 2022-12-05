@@ -81,3 +81,4 @@ jobs:
           RANCHER_PROJECT_ID: ${{ secrets.RANCHER_PROJECT_ID }}
           RANCHER_URL: ${{ secrets.RANCHER_URL }}
           RANCHER_WORKLOADS: 'treesradio'
+          DEBUG: true
