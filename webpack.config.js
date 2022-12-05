@@ -6,7 +6,7 @@ module.exports = {
   // Specify the output file containing our bundled code
   output: {
     path: __dirname + "/dist",
-    filename: "bundle.js",
+    filename: "index.js",
   },
   // Let webpack know to generate a Node.js bundle
   target: "node",
