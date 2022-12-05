@@ -76,7 +76,7 @@ jobs:
         uses: th0th/rancher-redeploy-workload@v0.9
         env: 
           RANCHER_BEARER_TOKEN: ${{ secrets.RANCHER_BEARER_TOKEN }}
-          RANCHER_CLUSTER_ID: 'null'
+          RANCHER_CLUSTER_ID: 'local'
           RANCHER_NAMESPACE: 'TreesRadio'
           RANCHER_PROJECT_ID: ${{ secrets.RANCHER_PROJECT_ID }}
           RANCHER_URL: ${{ secrets.RANCHER_URL }}
