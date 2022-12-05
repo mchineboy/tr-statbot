@@ -71,3 +71,13 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      
+      - name: Update rancher deployment
+        uses: th0th/rancher-redeploy-workload@v0.9
+        env: 
+          RANCHER_BEARER_TOKEN: ${{ secrets.RANCHER_BEARER_TOKEN }}
+          RANCHER_CLUSTER_ID: 'null'
+          RANCHER_NAMESPACE: 'treesradio'
+          RANCHER_PROJECT_ID: ${{ secrets.RANCHER_PROJECT_ID }}}
+          RANCHER_URL: ${{ secrets.RANCHER_URL }}}
+          RANCHER_WORKLOADS: 'treeradio'
