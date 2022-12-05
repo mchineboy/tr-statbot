@@ -78,6 +78,6 @@ jobs:
           RANCHER_BEARER_TOKEN: ${{ secrets.RANCHER_BEARER_TOKEN }}
           RANCHER_CLUSTER_ID: 'null'
           RANCHER_NAMESPACE: 'treesradio'
-          RANCHER_PROJECT_ID: ${{ secrets.RANCHER_PROJECT_ID }}}
-          RANCHER_URL: ${{ secrets.RANCHER_URL }}}
+          RANCHER_PROJECT_ID: ${{ secrets.RANCHER_PROJECT_ID }}
+          RANCHER_URL: ${{ secrets.RANCHER_URL }}
           RANCHER_WORKLOADS: 'treeradio'
