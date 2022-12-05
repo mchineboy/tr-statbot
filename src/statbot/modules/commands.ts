@@ -83,8 +83,8 @@ export const isCommand = (chat: any, message: any): boolean => {
               msg: `${message.username}, you have played ${Math.floor(
                 hours[0].total / 60 / 60 / 1000
               )}:${
-                Math.floor(hours[0].total / 60 / 1000) % 60
-              } hours of music.`,
+                (Math.floor(hours[0].total / 60 / 1000) % 60) < 10 ? "0" : ""
+              }${Math.floor(hours[0].total / 60 / 1000) % 60} hours of music.`,
             },
             chat.chatConfig.user
           );
