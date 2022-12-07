@@ -44,3 +44,5 @@ export interface Discord {
   id: string
   url: string
 }
+
+declare function emit(k, v);
