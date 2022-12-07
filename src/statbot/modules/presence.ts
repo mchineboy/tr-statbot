@@ -1,3 +1,4 @@
+import { DataSnapshot } from "firebase-admin/database";
 import { Database } from "firebase-admin/lib/database/database";
 import ObservableSlim from "observable-slim";
 import MongoDB from "../../lib/mongodb";
@@ -22,7 +23,7 @@ export default class PresenceListener {
 
   async run() {
     const presence = this.fbase.ref("presence");
-    presence.on("value", async (snapshot) => {
+    presence.on("value", async (snapshot: DataSnapshot) => {
       const message = snapshot.val();
 
       if (!message) {

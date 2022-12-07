@@ -1,4 +1,5 @@
 import { Database } from "firebase-admin/lib/database/database";
+import { DataSnapshot } from "firebase-admin/lib/database";
 import ObservableSlim from "observable-slim";
 import type Firebase from "../../lib/firebase";
 import MongoDB from "../../lib/mongodb";
@@ -32,7 +33,7 @@ export default class ChatListener {
 
   async run() {
     const chat = this.fbase.ref("chat");
-    chat.on("child_added", async (snapshot) => {
+    chat.on("child_added", async (snapshot: DataSnapshot) => {
       var message = snapshot.val();
       
       console.log((Date.now()/1000) - message.timestamp )

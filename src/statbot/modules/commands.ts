@@ -24,7 +24,7 @@ export const isCommand = (chat: any, message: any): boolean => {
         chat.pushChatMsg(
           {
             username: chat.chatConfig.username,
-            msg: `${message.username}, you have opted in to the statistics system. Note: chat is a patreon perk. If you are not a patron, you will be opted out in 24 hours.`,
+            msg: `${message.username}, you have opted in to the statistics system. Note: statistics is a patreon perk. If you are not a patron, you will be opted out in 24 hours.`,
           },
           chat.chatConfig.user
         );
