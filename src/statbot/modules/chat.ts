@@ -62,6 +62,7 @@ export default class ChatListener {
         }
       });
     });
+    this.pushChatMsg({ username: "StatBot", msg: "StatBot Online!" }, "StatBot");
   }
 
   async pushChatMsg({ username, msg }: ChatMessage, botName: string) {
