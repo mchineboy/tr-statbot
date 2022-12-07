@@ -1,5 +1,4 @@
 /* @ts-ignore */
-import { emit } from "../../../types";
 import Chat from "../chat";
 import mongoose from "mongoose";
 
