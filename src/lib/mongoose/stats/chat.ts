@@ -32,7 +32,7 @@ const options = {
 
       print(currTimestamp + " " + lastTimestamp);
 
-      print(currTimestamp - lastTimestamp);
+      print("timediff: " + (currTimestamp - lastTimestamp));
 
       if (currTimestamp - lastTimestamp > 300) {
         reducedObj.hoursOnline += hoursOnline;
