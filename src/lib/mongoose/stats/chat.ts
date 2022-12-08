@@ -82,7 +82,7 @@ interface IChatStats {
 
 const getChatStats = async (uid: string) => {
   // @ts-ignore
-  return await Chat.mapReduce({ ...options, query: { uid } });
+  return await Chat.mapReduce({ ...options, query: { uid }, limit: 1000000 });
 };
 
 export default getChatStats;
