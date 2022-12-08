@@ -89,7 +89,7 @@ export const isCommand = (chat: any, message: any): boolean => {
                   Math.floor(hours[0].total / 60 / 1000) % 60 < 10 ? "0" : ""
                 }${
                   Math.floor(hours[0].total / 60 / 1000) % 60
-                } hours of music.\nYou have chatted for ${Math.floor(stats.results[0].value.hoursOnline)/60/1000} minutes with your most active hour being ${stats.results[0].value.activeHours[0]+8}:00 UTC.`,
+                } hours of music.\nYou have chatted for ${Math.floor(stats.results[0].value.hoursOnline)/60/1000} minutes with your most active hour being ${stats.results[0].value.activeHours[0].hour+8}:00 UTC.`,
               },
               chat.chatConfig.user
             );
