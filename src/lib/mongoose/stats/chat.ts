@@ -15,11 +15,12 @@ const options = {
     var lastTimestamp = 0;
     var hoursOnline = 0;
     var activeHours = {};
+    print("chat total: " + values.length);
     for ( var i = 0; i < values.length; i++ ) {
       if (!values[i]) continue;
       const date = new Date(values[i]);
 
-      print(date.getHours() + " " + date.getMinutes() + " " + date.getSeconds());
+      print(date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds());
       activeHours[date.getHours()]
         ? activeHours[date.getHours()]++
         : (activeHours[date.getHours()] = 1);
@@ -37,6 +38,7 @@ const options = {
       if (currTimestamp - lastTimestamp > 300) {
         reducedObj.hoursOnline += hoursOnline;
         hoursOnline = 0;
+        lastTimestamp = currTimestamp;
         continue;
       }
 
