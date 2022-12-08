@@ -67,7 +67,7 @@ export const isCommand = (chat: any, message: any): boolean => {
       case ":stats":
         chat.mongo.playingHours(message.uid).then((hours: any) => {
           chat.mongo.getChatStats(message.uid).then((stats: any) => {
-            console.log(JSON.stringify(stats.results[0], undefined, 2));
+            console.log(`Stats:`, JSON.stringify(stats.results, undefined, 2));
             console.log(hours);
             if (!hours && !hours[0] && !hours[0].total) {
               chat.pushChatMsg(
@@ -89,7 +89,7 @@ export const isCommand = (chat: any, message: any): boolean => {
                   Math.floor(hours[0].total / 60 / 1000) % 60 < 10 ? "0" : ""
                 }${
                   Math.floor(hours[0].total / 60 / 1000) % 60
-                } hours of music.`,
+                } hours of music.\nYou have chatted for ${Math.floor(stats.results[0].hoursOnline)/60/1000} minutes with your most active hour being ${stats.results[0].hours[0]+8}:00 UTC.`,
               },
               chat.chatConfig.user
             );
