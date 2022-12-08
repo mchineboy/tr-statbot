@@ -3,10 +3,9 @@ import Chat from "../chat";
 import mongoose from "mongoose";
 
 const options: mongoose.MapReduceOptions<IChatStats, any, any> = {
-  map: () => {
-    // @ts-ignore
+  map: () => `{
     emit(this.key, this.value);
-  },
+  }`,
   reduce: (key: any, values: IChatStats[]) => {
     const reducedObj: ReducedChat = {
       uid: key,
