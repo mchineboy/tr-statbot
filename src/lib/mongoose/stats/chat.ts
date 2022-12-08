@@ -16,11 +16,15 @@ const options = {
     var hoursOnline = 0;
     var activeHours = {};
     print("chat total: " + values.length);
+
     for ( var i = 0; i < values.length; i++ ) {
       if (!values[i]) continue;
       const date = new Date(values[i]);
 
       print(date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds());
+
+      if ( date.getHours() == NaN ) continue;
+
       activeHours[date.getHours()]
         ? activeHours[date.getHours()]++
         : (activeHours[date.getHours()] = 1);
@@ -82,7 +86,12 @@ interface IChatStats {
 
 const getChatStats = async (uid: string) => {
   // @ts-ignore
-  return await Chat.mapReduce({ ...options, query: { uid }, limit: 1000000 });
+  return await Chat.mapReduce({
+    ...options,
+    query: { uid },
+    limit: 1000000,
+    scope: { uid },
+  });
 };
 
 export default getChatStats;
