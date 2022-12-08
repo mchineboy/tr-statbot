@@ -44,10 +44,10 @@ const options = {
 
       hoursOnline = hoursOnline + (currTimestamp - lastTimestamp);
       lastTimestamp = currTimestamp;
-      print(hoursOnline);
+      print("minutes: " +hoursOnline);
     }
 
-    reducedObj.hoursOnline += hoursOnline;
+    reducedObj.hoursOnline = reducedObj.hoursOnline + hoursOnline;
 
     for (const hour in activeHours) {
       reducedObj.activeHours.push({
