@@ -15,7 +15,7 @@ const options = {
     var lastTimestamp = 0;
     var hoursOnline = 0;
     var activeHours = {};
-    for ( var i = values.length; i >= 0; i-- ) {
+    for ( var i = 0; i < values.length; i-- ) {
       if (!values[i]) continue;
       const date = new Date(values[i]);
 
@@ -44,7 +44,7 @@ const options = {
       lastTimestamp = currTimestamp;
       print(hoursOnline);
     }
-    
+
     reducedObj.hoursOnline += hoursOnline;
 
     for (const hour in activeHours) {
