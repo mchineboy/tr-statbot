@@ -15,12 +15,11 @@ const options = {
     var lastTimestamp = 0;
     var hoursOnline = 0;
     var activeHours = {};
-    print (values.length);
     for ( var i = values.length; i >= 0; i-- ) {
-      print(values[i]);
       if (!values[i]) continue;
       const date = new Date(values[i]);
 
+      print(date.getHours() + " " + date.getMinutes() + " " + date.getSeconds());
       activeHours[date.getHours()]
         ? activeHours[date.getHours()]++
         : (activeHours[date.getHours()] = 1);
@@ -31,6 +30,10 @@ const options = {
 
       currTimestamp = values[i];
 
+      print(currTimestamp + " " + lastTimestamp);
+
+      print(currTimestamp - lastTimestamp);
+
       if (currTimestamp - lastTimestamp > 300) {
         reducedObj.hoursOnline += hoursOnline;
         hoursOnline = 0;
@@ -39,7 +42,10 @@ const options = {
 
       hoursOnline += currTimestamp - lastTimestamp;
       lastTimestamp = currTimestamp;
+      print(hoursOnline);
     }
+    
+    reducedObj.hoursOnline += hoursOnline;
 
     for (const hour in activeHours) {
       reducedObj.activeHours.push({
