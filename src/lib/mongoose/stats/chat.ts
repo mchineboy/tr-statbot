@@ -15,19 +15,19 @@ const options = {
     var lastTimestamp = 0;
     var hoursOnline = 0;
     var activeHours = {};
-    for ( const value of values ) {
-      if (!value.timestamp) return;
-      const date = new Date(value.timestamp);
+    for ( var i = 0; i < values.length; i++ ) {
+      if (!value[i].timestamp) return;
+      const date = new Date(value[i].timestamp);
 
       activeHours[date.getHours()]
         ? activeHours[date.getHours()]++
         : (activeHours[date.getHours()] = 1);
 
       if (lastTimestamp === 0) {
-        lastTimestamp = value.timestamp;
+        lastTimestamp = value[i].timestamp;
       }
 
-      currTimestamp = value.timestamp;
+      currTimestamp = value[i].timestamp;
 
       if (currTimestamp - lastTimestamp > 300) {
         reducedObj.hoursOnline += hoursOnline;
