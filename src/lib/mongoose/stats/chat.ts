@@ -53,7 +53,7 @@ const options: mongoose.MapReduceOptions<IChatStats, any, any> = {
 
     return reducedObj;
   },
-  out: { replace: "chatStats" },
+  out: { inline: 1 },
   verbose: true,
 };
 
