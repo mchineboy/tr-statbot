@@ -15,8 +15,9 @@ const options = {
     var lastTimestamp = 0;
     var hoursOnline = 0;
     var activeHours = {};
-
-    values.forEach((value) => {
+    console.log(values)
+    for ( const value of values ) {
+      console.log(value);
       if (!value.timestamp) return;
       const date = new Date(value.timestamp);
 
@@ -38,7 +39,7 @@ const options = {
 
       hoursOnline += currTimestamp - lastTimestamp;
       lastTimestamp = currTimestamp;
-    });
+    }
 
     for (const hour in activeHours) {
       reducedObj.activeHours.push({
@@ -72,6 +73,7 @@ interface IChatStats {
 }
 
 const getChatStats = async (uid: string) => {
+  // @ts-ignore
   return await Chat.mapReduce({ ...options, query: { uid } });
 };
 
