@@ -1,13 +1,12 @@
 /* @ts-ignore */
 import Chat from "../chat";
-import mongoose from "mongoose";
 
-const options: mongoose.MapReduceOptions<IChatStats, any, any> = {
+const options = {
   map: () => `{
-    emit(this.key, this.value);
+    emit(this.uid, 1);
   }`,
-  reduce: (key: any, values: IChatStats[]) => {
-    const reducedObj: ReducedChat = {
+  reduce: `(key, values) => {
+    const reducedObj = {
       uid: key,
       hoursOnline: 0,
       activeHours: [],
@@ -15,7 +14,7 @@ const options: mongoose.MapReduceOptions<IChatStats, any, any> = {
     var currTimestamp = 0;
     var lastTimestamp = 0;
     var hoursOnline = 0;
-    var activeHours: { [key: number]: number } = {};
+    var activeHours = {};
 
     values.forEach((value) => {
       if (!value.timestamp) return;
@@ -51,7 +50,7 @@ const options: mongoose.MapReduceOptions<IChatStats, any, any> = {
     reducedObj.activeHours.sort((a, b) => b.count - a.count);
 
     return reducedObj;
-  },
+  }`,
   out: { inline: 1 },
   verbose: true,
 };
