@@ -3,7 +3,7 @@ import Chat from "../chat";
 
 const options = {
   map: `function () {
-    emit(this.uid, 1);
+    emit(this.uid, { timestamp: this.timestamp });
   }`,
   reduce: `function(key, values) {
     const reducedObj = {
@@ -16,7 +16,7 @@ const options = {
     var hoursOnline = 0;
     var activeHours = {};
     for ( var i = 0; i < values.length; i++ ) {
-      if (!value[i].timestamp) return;
+      if (!value[i].timestamp) continue;
       const date = new Date(value[i].timestamp);
 
       activeHours[date.getHours()]
@@ -32,7 +32,7 @@ const options = {
       if (currTimestamp - lastTimestamp > 300) {
         reducedObj.hoursOnline += hoursOnline;
         hoursOnline = 0;
-        return;
+        continue;
       }
 
       hoursOnline += currTimestamp - lastTimestamp;
