@@ -15,9 +15,7 @@ const options = {
     var lastTimestamp = 0;
     var hoursOnline = 0;
     var activeHours = {};
-    console.log(values)
     for ( const value of values ) {
-      console.log(value);
       if (!value.timestamp) return;
       const date = new Date(value.timestamp);
 
