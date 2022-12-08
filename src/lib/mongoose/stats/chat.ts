@@ -2,10 +2,10 @@
 import Chat from "../chat";
 
 const options = {
-  map: () => `{
+  map: `function () {
     emit(this.uid, 1);
   }`,
-  reduce: `(key, values) => {
+  reduce: `function(key, values) {
     const reducedObj = {
       uid: key,
       hoursOnline: 0,
