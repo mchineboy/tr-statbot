@@ -42,7 +42,7 @@ const options = {
         continue;
       }
 
-      hoursOnline += currTimestamp - lastTimestamp;
+      hoursOnline = hoursOnline + (currTimestamp - lastTimestamp);
       lastTimestamp = currTimestamp;
       print(hoursOnline);
     }
