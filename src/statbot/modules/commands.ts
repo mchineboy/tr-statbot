@@ -80,19 +80,23 @@ export const isCommand = (chat: any, message: any): boolean => {
               return true;
             }
             if (stats.results[0])
-            chat.pushChatMsg(
-              {
-                username: chat.chatConfig.username,
-                msg: `${message.username}, you have played ${Math.floor(
-                  hours[0].total / 60 / 60 / 1000
-                )}:${
-                  Math.floor(hours[0].total / 60 / 1000) % 60 < 10 ? "0" : ""
-                }${
-                  Math.floor(hours[0].total / 60 / 1000) % 60
-                } hours of music.\nYou have chatted for ${Math.floor(stats.results[0].value.hoursOnline)/60/1000} minutes with your most active hour being ${stats.results[0].value.activeHours[0].hour+8}:00 UTC.`,
-              },
-              chat.chatConfig.user
-            );
+              chat.pushChatMsg(
+                {
+                  username: chat.chatConfig.username,
+                  msg: `${message.username}, you have played ${Math.floor(
+                    hours[0].total / 60 / 60 / 1000
+                  )}:${
+                    Math.floor(hours[0].total / 60 / 1000) % 60 < 10 ? "0" : ""
+                  }${
+                    Math.floor(hours[0].total / 60 / 1000) % 60
+                  } hours of music.\nYou have chatted for ${
+                    Math.floor(stats.results[0].value.hoursOnline) / 60
+                  } minutes with your most active hour being ${
+                    stats.results[0].value.activeHours[0].hour + 8
+                  }:00 UTC.`,
+                },
+                chat.chatConfig.user
+              );
           });
         });
         return true;
