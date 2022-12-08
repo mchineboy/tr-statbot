@@ -16,18 +16,18 @@ const options = {
     var hoursOnline = 0;
     var activeHours = {};
     for ( var i = 0; i < values.length; i++ ) {
-      if (!value) continue;
-      const date = new Date(value);
+      if (!values[i]) continue;
+      const date = new Date(values[i]);
 
       activeHours[date.getHours()]
         ? activeHours[date.getHours()]++
         : (activeHours[date.getHours()] = 1);
 
       if (lastTimestamp === 0) {
-        lastTimestamp = value;
+        lastTimestamp = values[i];
       }
 
-      currTimestamp = value;
+      currTimestamp = values[i];
 
       if (currTimestamp - lastTimestamp > 300) {
         reducedObj.hoursOnline += hoursOnline;
