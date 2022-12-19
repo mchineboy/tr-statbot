@@ -1,3 +1,4 @@
+import { DataSnapshot } from "firebase-admin/database";
 import { Database } from "firebase-admin/lib/database/database";
 import ObservableSlim from "observable-slim";
 import MongoDB from "../../lib/mongodb";
@@ -22,7 +23,7 @@ export default class PlayerListener {
 
   async run() {
     const playing = this.fbase.ref("songhistory");
-    playing.on("value", async (snapshot) => {
+    playing.on("value", async (snapshot: DataSnapshot) => {
       const message = snapshot.val();
       console.log(`[PlayerListener] ${JSON.stringify(message[0], undefined, 2)}`);
       this.mongo.getUser(message[0].uid, true).then((user) => {
