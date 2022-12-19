@@ -45,4 +45,8 @@ export default class MongoDB {
     async playingHours(uid: string) {
         return await totalPlayingHours(uid);
     }
+
+    async mostActiveHour(uid: string) {
+        
+    }
 }

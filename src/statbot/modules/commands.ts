@@ -66,6 +66,7 @@ export const isCommand = (chat: any, message: any): boolean => {
         return true;
       case ":stats":
         chat.mongo.playingHours(message.uid).then((hours: any) => {
+            
           console.log(hours);
           if (!hours && !hours[0] && !hours[0].total) {
             chat.pushChatMsg(

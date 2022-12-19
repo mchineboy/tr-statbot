@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-const presenceSchema = new Schema({
+export const presenceSchema = new Schema({
     uid: String,
     timestamp: Number,
 });
