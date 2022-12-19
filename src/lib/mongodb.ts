@@ -14,6 +14,7 @@ export default class MongoDB {
     this.client = await mongoose.connect(process.env.MONGODB_URI!, {
       waitQueueTimeoutMS: 30000,
     });
+    console.log(`MongoDB? ${this.client.connection.readyState}`);
   }
 
   async checkStatus(uid: string) {
