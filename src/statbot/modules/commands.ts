@@ -1,3 +1,5 @@
+import gatherStats from "./stats";
+
 export const isCommand = (chat: any, message: any): boolean => {
   if (message.msg.startsWith(":")) {
     switch (message.msg) {
@@ -65,50 +67,7 @@ export const isCommand = (chat: any, message: any): boolean => {
           });
         return true;
       case ":stats":
-        chat.postgres.playingHours(message.uid).then((hours: any) => {
-          chat.postgres.getChatStats(message.uid).then((stats: any) => {
-            console.log(`Stats:`, JSON.stringify(stats, undefined, 2));
-            console.log(hours);
-            if (!hours && !hours[0] && !hours[0].total) {
-              chat.pushChatMsg(
-                {
-                  username: chat.chatConfig.username,
-                  msg: `${message.username}, you have played 0:00 hours of music.`,
-                },
-                chat.chatConfig.user
-              );
-              return true;
-            }
-            if (stats[0])
-              var mostActiveHour: number;
-              
-              mostActiveHour = parseInt(stats[0].most_active_hour) + 8;
-
-              if (mostActiveHour > 24) {
-                mostActiveHour = mostActiveHour - 24;
-              }
-              chat.pushChatMsg(
-                {
-                  username: chat.chatConfig.username,
-                  msg: `${message.username}, you have played ${Math.floor(
-                    hours.rows[0].total / 60 / 60 / 1000
-                  )}:${
-                    Math.floor(hours.rows[0].total / 60 / 1000) % 60 < 10 ? "0" : ""
-                  }${
-                    Math.floor(hours.rows[0].total / 60 / 1000) % 60
-                  } hours of music.\nYou have chatted for 
-                  ${stats.rows[0].total_time.hours ? stats.rows[0].total_time.hours : "00"}:${
-                    stats.rows[0].total_time.minutes < 10 ? "0" : ""
-                  }${stats.rows[0].total_time.minutes}:${
-                    stats.rows[0].total_time.seconds < 10 ? "0" : ""
-                  }${stats.rows[0].total_time.seconds} minutes with your most active hour being ${
-                    mostActiveHour + 8
-                  }:00 UTC.`,
-                },
-                chat.chatConfig.user
-              );
-          });
-        });
+        gatherStats(chat, message);
         return true;
     }
   }

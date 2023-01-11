@@ -19,7 +19,7 @@ export default class PostgresStats {
     this.isInitialized = false;
     this.client = knex({
       client: "pg",
-      connection: process.env.PG_URI
+      connection: process.env.PG_URI,
     });
 
     this.initialize();
@@ -38,7 +38,10 @@ export default class PostgresStats {
       return;
     }
     timestamp = Math.round(timestamp);
-    return this.client("chat").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp])});
+    return this.client("chat").insert({
+      uid,
+      timestamp: this.client.raw("to_timestamp(?)", [timestamp]),
+    });
   }
 
   async storePresence(uid: string, timestamp: number) {
@@ -46,7 +49,10 @@ export default class PostgresStats {
       return;
     }
     timestamp = Math.round(timestamp);
-    return this.client("presence").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp])});
+    return this.client("presence").insert({
+      uid,
+      timestamp: this.client.raw("to_timestamp(?)", [timestamp]),
+    });
   }
 
   async storePlayer(uid: string, timestamp: number, song: any, songObj: any) {
@@ -55,16 +61,25 @@ export default class PostgresStats {
     }
     timestamp = Math.round(timestamp);
     delete song.avatar;
-    await this.client("songs").insert({ ...songObj }).onConflict(["url"]).merge();
-    return this.client("playing").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp]), url: song.url });
-    
+    await this.client("songs")
+      .insert({ ...songObj })
+      .onConflict(["url"])
+      .merge();
+    return this.client("playing").insert({
+      uid,
+      timestamp: this.client.raw("to_timestamp(?)", [timestamp]),
+      url: song.url,
+    });
   }
 
   async storeUser(uid: string, optin: boolean) {
     if (!this.isInitialized) {
       return;
     }
-    return this.client("users").insert({ uid, optin }).onConflict(["uid"]).merge();
+    return this.client("users")
+      .insert({ uid, optin })
+      .onConflict(["uid"])
+      .merge();
   }
 
   async checkStatus(uid: string) {
@@ -100,6 +115,29 @@ export default class PostgresStats {
     }
     return this.client.raw(
       `select * from calculate_time_consumed_and_most_active_hours_single_uid('chat', '${uid}')`
+    );
+  }
+
+  async getTopSong(uid: string) {
+    if (!this.isInitialized) {
+      return;
+    }
+    return this.client.raw(
+      `select url, title, count(title) as plays 
+        from playing where uid = '${uid}' 
+        group by url, title 
+        order by plays desc limit 1`
+    );
+  }
+
+  async getMostLikedSong(uid: string) {
+    if (!this.isInitialized) {
+      return;
+    }
+    return this.client.raw(
+      `select url, title, (likes + grabs) * hypes as likes
+        from playing where uid = '${uid}'
+        order by likes desc limit 1`
     );
   }
 }
