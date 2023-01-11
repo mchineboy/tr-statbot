@@ -19,8 +19,7 @@ export default class PostgresStats {
     this.isInitialized = false;
     this.client = knex({
       client: "pg",
-      connection: process.env.PG_URI,
-      debug: true,
+      connection: process.env.PG_URI
     });
 
     this.initialize();
