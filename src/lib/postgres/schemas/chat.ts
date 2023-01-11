@@ -8,7 +8,7 @@ export default async function Chat(knex: Knex) {
         table.timestamp("timestamp");
         table.timestamps();
         table.index("uid");
+        knex.raw(`create index chat_uid_timestamp on chat (uid, timestamp desc)`);
     });
-    knex.raw(`create index chat_uid_timestamp on chat (uid, timestamp desc)`);
     return true;
 }
