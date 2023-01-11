@@ -1,7 +1,8 @@
 import {Knex} from 'knex';
 
-export default function Chat(knex: Knex) {
-    knex.schema.createTableIfNotExists("chat", (table) => {
+export default async function Chat(knex: Knex) {
+    console.log("Creating chat table")
+    await knex.schema.createTableIfNotExists("chat", (table) => {
         table.bigIncrements("id").primary();
         table.string("uid");
         table.timestamp("timestamp");

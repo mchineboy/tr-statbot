@@ -1,7 +1,8 @@
 import {Knex} from 'knex';
 
-export default function Playing(knex: Knex) {
-    knex.schema.createTableIfNotExists("songs", (table) => {
+export default async function Playing(knex: Knex) {
+    console.log("Creating playing table")
+    await knex.schema.createTableIfNotExists("songs", (table) => {
         table.string("url").primary();
         table.string("title");
         table.string("duration");
@@ -9,7 +10,7 @@ export default function Playing(knex: Knex) {
         table.string("thumb");
         table.timestamps();
     });
-    knex.schema.createTable("playing", (table) => {
+    await knex.schema.createTable("playing", (table) => {
         table.bigIncrements("id").primary();
         table.string("uid");
         table.string("url");
