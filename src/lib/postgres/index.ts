@@ -54,14 +54,8 @@ export default class PostgresStats {
       return;
     }
     timestamp = Math.round(timestamp);
-    return await this.client("songs")
-      .where({ url: song.url })
-      .then(async (exists) => {
-        if (!exists || exists.length === 0) {
-          await this.client("songs").insert({ song });
-        }
-        return this.client("playing").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp]), url: song.url });
-      });
+    await this.client("songs").insert({ song }).onConflict(["url"]).merge();
+    return this.client("playing").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp]), url: song.url });
     
   }
 
