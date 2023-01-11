@@ -20,7 +20,7 @@ export const isCommand = (chat: any, message: any): boolean => {
         );
         return true;
       case ":optin":
-        chat.mongo.storeUser(message.uid, true);
+        chat.postgres.storeUser(message.uid, true);
         chat.pushChatMsg(
           {
             username: chat.chatConfig.username,
@@ -31,7 +31,7 @@ export const isCommand = (chat: any, message: any): boolean => {
         console.log(`User ${message.uid} opted in.`);
         return true;
       case ":optout":
-        chat.mongo.storeUser(message.uid, false);
+        chat.postgres.storeUser(message.uid, false);
         chat.pushChatMsg(
           {
             username: chat.chatConfig.username,
@@ -42,7 +42,7 @@ export const isCommand = (chat: any, message: any): boolean => {
         console.log(`User ${message.uid} opted out.`);
         return true;
       case ":status":
-        chat.mongo
+        chat.postgres
           .checkStatus(message.uid)
           .then((user: { uid: string; optin: boolean }) => {
             if (user && user.optin) {
@@ -65,8 +65,8 @@ export const isCommand = (chat: any, message: any): boolean => {
           });
         return true;
       case ":stats":
-        chat.mongo.playingHours(message.uid).then((hours: any) => {
-          chat.mongo.getChatStats(message.uid).then((stats: any) => {
+        chat.postgres.playingHours(message.uid).then((hours: any) => {
+          chat.postgres.getChatStats(message.uid).then((stats: any) => {
             console.log(`Stats:`, JSON.stringify(stats.results, undefined, 2));
             console.log(hours);
             if (!hours && !hours[0] && !hours[0].total) {
