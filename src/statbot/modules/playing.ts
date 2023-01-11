@@ -1,12 +1,12 @@
 import { DataSnapshot } from "firebase-admin/database";
 import { Database } from "firebase-admin/lib/database/database";
 import ObservableSlim from "observable-slim";
-import MongoDB from "../../lib/mongodb";
+import Postgres from "../../lib/postgres";
 
 export default class PlayerListener {
   fbase: Database;
   patrons: any[];
-  mongo: MongoDB;
+  postgres: Postgres;
 
   constructor(
     fbase: Database,
@@ -18,7 +18,7 @@ export default class PlayerListener {
     ObservableSlim.observe(patronObservable, (changes: any) => {
       this.patrons = changes.target;
     });
-    this.mongo = new MongoDB();
+    this.postgres = new Postgres();
   }
 
   async run() {
@@ -26,13 +26,13 @@ export default class PlayerListener {
     playing.on("value", async (snapshot: DataSnapshot) => {
       const message = snapshot.val();
       console.log(`[PlayerListener] ${JSON.stringify(message[0], undefined, 2)}`);
-      this.mongo.getUser(message[0].uid, true).then((user) => {
+      this.postgres.getUser(message[0].uid, true).then((user) => {
         if (user) {
-          this.mongo
+          this.postgres
             .storePlayer(message[0].uid, Date.now() / 1000, message[0])
             .then((user) => {
               console.log(
-                `Inserted ID ${user._id} played: ${JSON.stringify(
+                `Inserted ID ${JSON.stringify(user)} played: ${JSON.stringify(
                   message[0],
                   undefined,
                   2

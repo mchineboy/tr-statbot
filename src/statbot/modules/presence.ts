@@ -1,12 +1,12 @@
 import { DataSnapshot } from "firebase-admin/database";
 import { Database } from "firebase-admin/lib/database/database";
 import ObservableSlim from "observable-slim";
-import MongoDB from "../../lib/mongodb";
+import Postgres from "../../lib/postgres";
 
 export default class PresenceListener {
   fbase: Database;
   patrons: any[];
-  mongo: MongoDB;
+  postgres: Postgres;
 
   constructor(
     fbase: Database,
@@ -18,7 +18,7 @@ export default class PresenceListener {
     ObservableSlim.observe(patronObservable, (changes: any) => {
       this.patrons = changes.target;
     });
-    this.mongo = new MongoDB();
+    this.postgres = new Postgres();
   }
 
   async run() {
@@ -37,13 +37,13 @@ export default class PresenceListener {
       );
 
       if (isPatron) {
-        this.mongo.getUser(
+        this.postgres.getUser(
             Object.keys(message)[0],
             true,
           )
           .then((user) => {
             if (user) {
-              this.mongo.storePresence(
+              this.postgres.storePresence(
                 Object.keys(message)[0],
                 Date.now()/1000,
               );

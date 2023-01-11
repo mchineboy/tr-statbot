@@ -2,7 +2,7 @@ import { Database } from "firebase-admin/lib/database/database";
 import { DataSnapshot } from "firebase-admin/lib/database";
 import ObservableSlim from "observable-slim";
 import type Firebase from "../../lib/firebase";
-import MongoDB from "../../lib/mongodb";
+import Postgres from "../../lib/postgres";
 import { isCommand } from "./commands";
 
 export default class ChatListener {
@@ -14,7 +14,7 @@ export default class ChatListener {
     username: "StatBot",
     user: "StatBot",
   };
-  mongo: MongoDB;
+  postgres: Postgres;
 
   constructor(
     fbase_class: Firebase,
@@ -28,7 +28,7 @@ export default class ChatListener {
     ObservableSlim.observe(patronObservable, (changes: any) => {
       this.patrons = changes.target;
     });
-    this.mongo = new MongoDB();
+    this.postgres = new Postgres();
   }
 
   async run() {
@@ -56,9 +56,9 @@ export default class ChatListener {
         return;
       }
 
-      this.mongo.getUser(message.uid, true).then((user) => {
+      this.postgres.getUser(message.uid, true).then((user) => {
         if (user) {
-          this.mongo.storeChat(message.uid, message.timestamp);
+          this.postgres.storeChat(message.uid, message.timestamp);
         }
       });
     });

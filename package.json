@@ -24,8 +24,10 @@
   },
   "dependencies": {
     "firebase-admin": "^11.3.0",
+    "knex": "^2.4.0",
     "mongoose": "^6.8.0",
-    "observable-slim": "^0.1.6"
+    "observable-slim": "^0.1.6",
+    "pg": "^8.8.0"
   },
   "scripts": {
     "dev": "ts-node --files src/index.ts",
