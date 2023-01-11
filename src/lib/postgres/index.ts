@@ -38,6 +38,7 @@ export default class PostgresStats {
     if (!this.isInitialized) {
       return;
     }
+    timestamp = Math.round(timestamp);
     return this.client("chat").insert({ uid, timestamp });
   }
 
@@ -45,6 +46,7 @@ export default class PostgresStats {
     if (!this.isInitialized) {
       return;
     }
+    timestamp = Math.round(timestamp);
     return this.client("presence").insert({ uid, timestamp });
   }
 
@@ -52,6 +54,7 @@ export default class PostgresStats {
     if (!this.isInitialized) {
       return;
     }
+    timestamp = Math.round(timestamp);
     this.client("song")
       .where({ song })
       .then((exists) => {
