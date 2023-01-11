@@ -1,7 +1,7 @@
 import {Knex} from 'knex';
 
 export default function Chat(knex: Knex) {
-    knex.schema.createTable("chat", (table) => {
+    knex.schema.createTableIfNotExists("chat", (table) => {
         table.bigIncrements("id").primary();
         table.string("uid");
         table.timestamp("timestamp");

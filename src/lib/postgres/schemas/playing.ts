@@ -1,7 +1,7 @@
 import {Knex} from 'knex';
 
 export default function Playing(knex: Knex) {
-    knex.schema.createTable("songs", (table) => {
+    knex.schema.createTableIfNotExists("songs", (table) => {
         table.string("url").primary();
         table.string("title");
         table.string("duration");

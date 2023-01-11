@@ -24,11 +24,7 @@ export default class PostgresStats {
     });
 
     for (const schema in schemas) {
-      this.client.schema.hasTable(schema).then((exists) => {
-        if (!exists) {
           schemas[schema](this.client);
-        }
-      });
     }
 
     this.client.raw(
