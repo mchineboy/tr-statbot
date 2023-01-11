@@ -80,7 +80,10 @@ export const isCommand = (chat: any, message: any): boolean => {
               return true;
             }
             if (stats[0])
-              var mostActiveHour = stats[0].most_active_hours + 8;
+              var mostActiveHour: number;
+              
+              mostActiveHour = parseInt(stats[0].most_active_hour) + 8;
+
               if (mostActiveHour > 24) {
                 mostActiveHour = mostActiveHour - 24;
               }
@@ -94,7 +97,7 @@ export const isCommand = (chat: any, message: any): boolean => {
                   }${
                     Math.floor(hours.rows[0].total / 60 / 1000) % 60
                   } hours of music.\nYou have chatted for 
-                  ${stats.rows[0].total_time.hours ? stats.rows[0].total_time.houts : "00"}:${
+                  ${stats.rows[0].total_time.hours ? stats.rows[0].total_time.hours : "00"}:${
                     stats.rows[0].total_time.minutes < 10 ? "0" : ""
                   }${stats.rows[0].total_time.minutes}:${
                     stats.rows[0].total_time.seconds < 10 ? "0" : ""
