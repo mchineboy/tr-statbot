@@ -43,7 +43,7 @@ export default async function gatherStats(chat: any, message: any) {
         chatStats.rows[0].total_time.seconds < 10 ? "0" : ""
     }${
       chatStats.rows[0].total_time.seconds
-    }s\n* your most active hour is ${mostActiveHour}:00 UTC.\n\n`;
+    }s\n* Your most active hour is ${mostActiveHour}:00 UTC.\n\n`;
   }
   chat.pushChatMsg(
     {
