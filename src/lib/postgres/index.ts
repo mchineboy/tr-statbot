@@ -54,7 +54,7 @@ export default class PostgresStats {
       return;
     }
     timestamp = Math.round(timestamp);
-    await this.client("songs").insert({ song }).onConflict(["url"]).merge();
+    await this.client("songs").insert({ ...song }).onConflict(["url"]).merge();
     return this.client("playing").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp]), url: song.url });
     
   }
