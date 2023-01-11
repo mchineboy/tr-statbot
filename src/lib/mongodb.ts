@@ -4,6 +4,14 @@ import Chat, { getChatStats } from "./mongoose/chat";
 import Presence from "./mongoose/presence";
 import Player, { totalPlayingHours } from "./mongoose/playing";
 
+process.on("unhandledRejection", (reason, p) => {
+  console.error("Unhandled Rejection at: Promise", p, "reason:", reason);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception thrown", err);
+});
+
 export default class MongoDB {
   client?: mongoose.Mongoose;
   constructor() {
@@ -14,6 +22,7 @@ export default class MongoDB {
     this.client = await mongoose.connect(process.env.MONGODB_URI!, {
       waitQueueTimeoutMS: 30000,
     });
+    console.log(`MongoDB? ${this.client.connection.readyState}`);
   }
 
   async checkStatus(uid: string) {
