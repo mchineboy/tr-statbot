@@ -61,7 +61,7 @@ export default class PostgresStats {
           this.client("songs").insert({ song });
         }
       });
-    return this.client("playing").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp]), song });
+    return this.client("playing").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp]), url: song.url });
   }
 
   async storeUser(uid: string, optin: boolean) {
