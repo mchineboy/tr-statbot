@@ -21,7 +21,7 @@ export default async function Playing(knex: Knex) {
         table.string("uid");
         table.string("url");
         table.string("title");
-        table.string("time");
+        table.integer("time");
         table.string("username");
         table.string("avatar");
         table.string("thumb");

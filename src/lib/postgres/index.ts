@@ -60,15 +60,14 @@ export default class PostgresStats {
       return;
     }
     timestamp = Math.round(timestamp);
-    delete song.avatar;
+    
     await this.client("songs")
       .insert({ ...songObj })
       .onConflict(["url"])
       .merge();
     return this.client("playing").insert({
-      uid,
+      ...song,
       timestamp: this.client.raw("to_timestamp(?)", [timestamp]),
-      url: song.url,
     });
   }
 
@@ -123,10 +122,12 @@ export default class PostgresStats {
       return;
     }
     return this.client.raw(
-      `select url, title, count(title) as plays 
-        from playing where uid = '${uid}' 
-        group by url, title 
-        order by plays desc limit 1`
+      `select a.url, b.title, count(b.title) as plays
+      from playing a
+      join songs b on a.url = b.url 
+     where uid = ?
+     group by a.url, b.title
+     order by plays desc`, [uid]
     );
   }
 
