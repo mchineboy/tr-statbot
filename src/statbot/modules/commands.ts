@@ -35,7 +35,7 @@ export const isCommand = (chat: any, message: any): boolean => {
         chat.pushChatMsg(
           {
             username: chat.chatConfig.username,
-            msg: "You have opted in to the statistics system.",
+            msg: "You have opted out of the statistics system.",
           },
           chat.chatConfig.user
         );
