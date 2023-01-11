@@ -2,7 +2,7 @@ import gatherStats from "./stats";
 
 export const isCommand = (chat: any, message: any): boolean => {
   if (message.msg.startsWith(":")) {
-    switch (message.msg) {
+    switch (message.msg.split(' ')[0].toLowerCase()) {
       case ":ping":
         chat.pushChatMsg(
           {
