@@ -29,6 +29,16 @@
     "observable-slim": "^0.1.6",
     "pg": "^8.8.0"
   },
+  "esbuild": {
+    "externals": [
+      "sqlite3",
+      "better-sqlite3",
+      "tedious",
+      "mysql2",
+      "oracledb",
+      "pg-native"
+    ]
+  },
   "scripts": {
     "dev": "ts-node --files src/index.ts",
     "start": "node ./dist/index.js",
