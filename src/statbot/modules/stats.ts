@@ -20,6 +20,7 @@ export default async function gatherStats(chat: any, message: any) {
     chatMsg += `Your most liked song is ${mostLikedSong.rows[0].title} with ${mostLikedSong.rows[0].count} likes.\n\n`;
 
   if (chatStats && chatStats.rows?.length > 0) {
+    console.log(JSON.stringify(chatStats.rows, undefined, 2))
     var mostActiveHour: number;
 
     mostActiveHour = parseInt(chatStats.rows[0].most_active_hour) + 8;
@@ -29,19 +30,19 @@ export default async function gatherStats(chat: any, message: any) {
     }
 
     chatMsg += `### Chat\n\n`;
-    chatMsg += `You have chatted for 
-    ${
+    chatMsg += `You have chatted for ${
       chatStats.rows[0].total_time.hours
         ? chatStats.rows[0].total_time.hours
         : "00"
-    }:
-    ${chatStats.rows[0].total_time.minutes < 10 ? "0" : ""}
-    ${chatStats.rows[0].total_time.minutes}:
-    ${chatStats.rows[0].total_time.seconds < 10 ? "0" : ""}
-    ${
+    }:${
+        chatStats.rows[0].total_time.minutes < 10 ? "0" : ""
+    }${
+        chatStats.rows[0].total_time.minutes
+    }:${
+        chatStats.rows[0].total_time.seconds < 10 ? "0" : ""
+    }${
       chatStats.rows[0].total_time.seconds
-    } minutes with your most active hour being 
-    ${mostActiveHour}:00 UTC.\n\n`;
+    } minutes with your most active hour being ${mostActiveHour}:00 UTC.\n\n`;
   }
   chat.pushChatMsg(
     {
