@@ -30,7 +30,7 @@
     "pg": "^8.8.0"
   },
   "esbuild": {
-    "externals": [
+    "external": [
       "sqlite3",
       "better-sqlite3",
       "tedious",
@@ -42,7 +42,7 @@
   "scripts": {
     "dev": "ts-node --files src/index.ts",
     "start": "node ./dist/index.js",
-    "build": "rm -rf dist && esbuild --bundle --platform=node --target=node16 --format=cjs --outdir=dist src/index.ts",
+    "build": "rm -rf dist && esbuild --bundle --platform=node --target=node16 --format=cjs --outdir=dist --external:better-sqlite3 --external:sqlite3 --external:oracledb --external:mysql --external:pg-query-stream --external:mysql --external:mysql2 --external:pg-native --external:tedious  src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
