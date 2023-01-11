@@ -35,7 +35,9 @@ export default class PlayerListener {
       console.log(`[PlayerListener] ${JSON.stringify(message[0], undefined, 2)}`);
       this.postgres.getUser(message[0].uid, true).then((user) => {
         if (user && user.length > 0) {
+
           const song = message[0].songObj;
+          delete song.playlist;
           delete message[0].songObj;
           const player = message[0];
           this.postgres
