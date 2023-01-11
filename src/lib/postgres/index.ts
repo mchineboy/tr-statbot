@@ -56,7 +56,7 @@ export default class PostgresStats {
     }
     timestamp = Math.round(timestamp);
     this.client("songs")
-      .where({ song })
+      .where({ url: song.url })
       .then((exists) => {
         if (!exists) {
           this.client("songs").insert({ song });
