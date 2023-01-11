@@ -92,9 +92,9 @@ export default class PostgresStats {
       return;
     }
     return this.client.raw(`select
-            sum(song.duration) as total
+            sum(songs.duration) as total
             from playing
-            join song on song.url = playing.url
+            join songs on songs.url = playing.url
             where uid = '${uid}'
             group by uid`);
   }
