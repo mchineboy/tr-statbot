@@ -127,7 +127,7 @@ export default class PostgresStats {
       join songs b on a.url = b.url 
      where uid = ?
      group by a.url, b.title
-     order by plays desc`, [uid]
+     order by plays desc limit 1`, [uid]
     );
   }
 
@@ -136,9 +136,11 @@ export default class PostgresStats {
       return;
     }
     return this.client.raw(
-      `select url, title, (likes + grabs) * hypes as likes
-        from playing where uid = '${uid}'
-        order by likes desc limit 1`
+      `select a.url, b.title, (likes + grabs) * hypes as likes
+      from playing a
+      join songs b on a.url = b.url 
+      where a.uid = ?
+      order by likes desc limit 1`, [uid]
     );
   }
 }
