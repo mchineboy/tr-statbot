@@ -4,7 +4,7 @@ export default async function Playing(knex: Knex) {
   console.log("Creating playing table");
   await knex.schema.hasTable("songs").then(async (exists) => {
     if (!exists) {
-      await knex.schema.createTableIfNotExists("songs", (table) => {
+      await knex.schema.createTable("songs", (table) => {
         table.string("url").primary();
         table.string("title");
         table.string("duration");

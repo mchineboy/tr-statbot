@@ -4,7 +4,7 @@ export default async function Users(knex: Knex) {
   console.log("Creating users table");
   await knex.schema.hasTable("users").then(async (exists) => {
     if (!exists) {
-      return await knex.schema.createTableIfNotExists("users", (table) => {
+      return await knex.schema.createTable("users", (table) => {
         table.string("uid").primary();
         table.boolean("optin");
         table.timestamps();
