@@ -18,6 +18,7 @@ export default class PostgresStats {
     this.client = knex({
       client: "pg",
       connection: process.env.PG_URI,
+      debug: true,
     });
 
     for (const schema in schemas) {

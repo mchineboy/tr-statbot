@@ -14,3 +14,4 @@ pids
 *.pid
 *.seed
 *.pid.lock
+meta.json
