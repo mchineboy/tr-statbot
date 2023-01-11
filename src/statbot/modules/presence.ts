@@ -19,6 +19,9 @@ export default class PresenceListener {
       this.patrons = changes.target;
     });
     this.postgres = new Postgres();
+    while (!this.postgres.isInitialized) {
+      console.log("Waiting for postgres to initialize");
+    }
   }
 
   async run() {
