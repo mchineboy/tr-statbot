@@ -19,9 +19,13 @@ export default class PresenceListener {
       this.patrons = changes.target;
     });
     this.postgres = new Postgres();
-    while (!this.postgres.isInitialized) {
-      console.log("Waiting for postgres to initialize");
-    }
+    const waitTimer = setInterval(() => {
+      if (this.postgres.isInitialized) {
+        clearInterval(waitTimer);
+        this.run();
+      }
+      console.log("Presence: Waiting for postgres to initialize")
+    }, 5000);
   }
 
   async run() {

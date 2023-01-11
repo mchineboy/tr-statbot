@@ -36,15 +36,15 @@ export default async function main() {
     database,
     patrons,
     patronObservable
-  ).run();
+  );
   console.log(`Starting Presence Listener`);
   const presence = new PresenceListener(
     database,
     patrons,
     patronObservable
-  ).run();
+  );
   console.log(`Starting Player Listener`);
-  const playing = new PlayerListener(database, patrons, patronObservable).run();
+  const playing = new PlayerListener(database, patrons, patronObservable);
 }
 
 async function updatePatrons(firebase: Firebase) {

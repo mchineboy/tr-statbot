@@ -19,6 +19,13 @@ export default class PlayerListener {
       this.patrons = changes.target;
     });
     this.postgres = new Postgres();
+    const waitTimer = setInterval(() => {
+      if (this.postgres.isInitialized) {
+        clearInterval(waitTimer);
+        this.run();
+      }
+      console.log("Playing: Waiting for postgres to initialize")
+    }, 5000);
   }
 
   async run() {

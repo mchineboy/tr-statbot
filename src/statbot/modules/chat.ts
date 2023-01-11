@@ -29,6 +29,13 @@ export default class ChatListener {
       this.patrons = changes.target;
     });
     this.postgres = new Postgres();
+    const waitTimer = setInterval(() => {
+      if (this.postgres.isInitialized) {
+        clearInterval(waitTimer);
+        this.run();
+      }
+      console.log("Chat: Waiting for postgres to initialize")
+    }, 5000);
   }
 
   async run() {
