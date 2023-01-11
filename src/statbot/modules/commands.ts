@@ -88,15 +88,18 @@ export const isCommand = (chat: any, message: any): boolean => {
                 {
                   username: chat.chatConfig.username,
                   msg: `${message.username}, you have played ${Math.floor(
-                    hours.total / 60 / 60 / 1000
+                    hours.rows[0].total / 60 / 60 / 1000
                   )}:${
-                    Math.floor(hours.total / 60 / 1000) % 60 < 10 ? "0" : ""
+                    Math.floor(hours.rows[0].total / 60 / 1000) % 60 < 10 ? "0" : ""
                   }${
-                    Math.floor(hours.total / 60 / 1000) % 60
-                  } hours of music.\nYou have chatted for ${
-                    Math.floor(stats[0].total_time) / 60
-                  } minutes with your most active hour being ${
-                    mostActiveHour + 8
+                    Math.floor(hours.rows[0].total / 60 / 1000) % 60
+                  } hours of music.\nYou have chatted for 
+                  ${stats.rows[0].total_time.hours ? stats.rows[0].total_time.houts : "00"}:${
+                    stats.rows[0].total_time.minutes < 10 ? "0" : ""
+                  }${stats.rows[0].total_time.minutes}:${
+                    stats.rows[0].total_time.seconds < 10 ? "0" : ""
+                  }${stats.rows[0].total_time.seconds} minutes with your most active hour being ${
+                    parseInt(mostActiveHour) + 8
                   }:00 UTC.`,
                 },
                 chat.chatConfig.user
