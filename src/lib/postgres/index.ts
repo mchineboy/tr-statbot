@@ -64,7 +64,7 @@ export default class PostgresStats {
     if (!this.isInitialized) {
       return;
     }
-    return this.client("users").insert({ uid, optin });
+    return this.client("users").insert({ uid, optin }).onConflict(["uid"]).merge();
   }
 
   async checkStatus(uid: string) {
