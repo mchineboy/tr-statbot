@@ -7,7 +7,7 @@ export default async function Playing(knex: Knex) {
       await knex.schema.createTable("songs", (table) => {
         table.string("url").primary();
         table.string("title");
-        table.string("duration");
+        table.bigInteger("duration");
         table.string("channel");
         table.string("thumb");
         table.timestamps();
@@ -25,10 +25,10 @@ export default async function Playing(knex: Knex) {
         table.string("username");
         table.string("avatar");
         table.string("thumb");
-        table.string("dislikes");
-        table.string("grabs");
-        table.string("hypes");
-        table.string("likes");
+        table.integer("dislikes");
+        table.integer("grabs");
+        table.integer("hypes");
+        table.integer("likes");
         table.timestamp("timestamp");
         table.foreign("url").references("songs.url");
         table.timestamps();
