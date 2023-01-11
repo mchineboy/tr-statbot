@@ -99,7 +99,7 @@ export const isCommand = (chat: any, message: any): boolean => {
                   }${stats.rows[0].total_time.minutes}:${
                     stats.rows[0].total_time.seconds < 10 ? "0" : ""
                   }${stats.rows[0].total_time.seconds} minutes with your most active hour being ${
-                    parseInt(mostActiveHour) + 8
+                    mostActiveHour + 8
                   }:00 UTC.`,
                 },
                 chat.chatConfig.user
