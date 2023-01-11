@@ -34,7 +34,7 @@ export default class PlayerListener {
       const message = snapshot.val();
       console.log(`[PlayerListener] ${JSON.stringify(message[0], undefined, 2)}`);
       this.postgres.getUser(message[0].uid, true).then((user) => {
-        if (user) {
+        if (user && user.length > 0) {
           this.postgres
             .storePlayer(message[0].uid, Date.now() / 1000, message[0])
             .then((user) => {

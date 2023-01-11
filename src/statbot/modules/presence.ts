@@ -49,7 +49,7 @@ export default class PresenceListener {
             true,
           )
           .then((user) => {
-            if (user) {
+            if (user && user.length > 0) {
               this.postgres.storePresence(
                 Object.keys(message)[0],
                 Date.now()/1000,

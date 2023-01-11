@@ -63,7 +63,7 @@ export default class ChatListener {
       }
 
       this.postgres.getUser(message.uid, true).then((user) => {
-        if (user) {
+        if (user && user.length > 0) {
           this.postgres.storeChat(message.uid, message.timestamp);
         }
       });
