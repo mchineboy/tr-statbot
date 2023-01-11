@@ -49,13 +49,13 @@ export default class PostgresStats {
     return this.client("presence").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp])});
   }
 
-  async storePlayer(uid: string, timestamp: number, song: any) {
+  async storePlayer(uid: string, timestamp: number, song: any, songObj: any) {
     if (!this.isInitialized) {
       return;
     }
     timestamp = Math.round(timestamp);
     delete song.avatar;
-    await this.client("songs").insert({ ...song }).onConflict(["url"]).merge();
+    await this.client("songs").insert({ ...songObj }).onConflict(["url"]).merge();
     return this.client("playing").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp]), url: song.url });
     
   }

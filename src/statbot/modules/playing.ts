@@ -35,8 +35,11 @@ export default class PlayerListener {
       console.log(`[PlayerListener] ${JSON.stringify(message[0], undefined, 2)}`);
       this.postgres.getUser(message[0].uid, true).then((user) => {
         if (user && user.length > 0) {
+          const song = message[0].songObj;
+          delete message[0].songObj;
+          const player = message[0];
           this.postgres
-            .storePlayer(message[0].uid, Date.now() / 1000, message[0])
+            .storePlayer(message[0].uid, Date.now() / 1000, player, song)
             .then((user) => {
               console.log(
                 `Inserted ID ${JSON.stringify(user)} played: ${JSON.stringify(
