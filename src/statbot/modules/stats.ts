@@ -23,7 +23,7 @@ export default async function gatherStats(chat: any, message: any) {
     console.log(JSON.stringify(chatStats.rows, undefined, 2))
     var mostActiveHour: number;
 
-    mostActiveHour = parseInt(chatStats.rows[0].most_active_hour)
+    mostActiveHour = parseInt(chatStats.rows[0].most_active_hours)
     mostActiveHour += 8;
 
     if (mostActiveHour > 24) {
