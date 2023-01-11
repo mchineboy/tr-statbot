@@ -39,7 +39,7 @@ export default class PlayerListener {
           
           song = {};
 
-          for (const key in ['url', 'title', 'duration', 'channel', 'thumb']) {
+          for (const key of ['url', 'title', 'duration', 'channel', 'thumb']) {
             song[key] = message[0].songObj[key];
           }
 
