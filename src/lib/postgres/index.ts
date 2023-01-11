@@ -39,7 +39,7 @@ export default class PostgresStats {
       return;
     }
     timestamp = Math.round(timestamp);
-    return this.client("chat").insert({ uid, timestamp });
+    return this.client("chat").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp])});
   }
 
   async storePresence(uid: string, timestamp: number) {
@@ -47,7 +47,7 @@ export default class PostgresStats {
       return;
     }
     timestamp = Math.round(timestamp);
-    return this.client("presence").insert({ uid, timestamp });
+    return this.client("presence").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp])});
   }
 
   async storePlayer(uid: string, timestamp: number, song: any) {
@@ -62,7 +62,7 @@ export default class PostgresStats {
           this.client("song").insert({ song });
         }
       });
-    return this.client("playing").insert({ uid, timestamp, song });
+    return this.client("playing").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp]), song });
   }
 
   async storeUser(uid: string, optin: boolean) {
