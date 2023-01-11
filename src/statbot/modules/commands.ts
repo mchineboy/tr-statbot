@@ -67,7 +67,7 @@ export const isCommand = (chat: any, message: any): boolean => {
       case ":stats":
         chat.postgres.playingHours(message.uid).then((hours: any) => {
           chat.postgres.getChatStats(message.uid).then((stats: any) => {
-            console.log(`Stats:`, JSON.stringify(stats.results, undefined, 2));
+            console.log(`Stats:`, JSON.stringify(stats, undefined, 2));
             console.log(hours);
             if (!hours && !hours[0] && !hours[0].total) {
               chat.pushChatMsg(
@@ -79,20 +79,24 @@ export const isCommand = (chat: any, message: any): boolean => {
               );
               return true;
             }
-            if (stats.results[0])
+            if (stats[0])
+              var mostActiveHour = stats[0].most_active_hours + 8;
+              if (mostActiveHour > 24) {
+                mostActiveHour = mostActiveHour - 24;
+              }
               chat.pushChatMsg(
                 {
                   username: chat.chatConfig.username,
                   msg: `${message.username}, you have played ${Math.floor(
-                    hours[0].total / 60 / 60 / 1000
+                    hours.total / 60 / 60 / 1000
                   )}:${
-                    Math.floor(hours[0].total / 60 / 1000) % 60 < 10 ? "0" : ""
+                    Math.floor(hours.total / 60 / 1000) % 60 < 10 ? "0" : ""
                   }${
-                    Math.floor(hours[0].total / 60 / 1000) % 60
+                    Math.floor(hours.total / 60 / 1000) % 60
                   } hours of music.\nYou have chatted for ${
-                    Math.floor(stats.results[0].value.hoursOnline) / 60
+                    Math.floor(stats[0].total_time) / 60
                   } minutes with your most active hour being ${
-                    stats.results[0].value.activeHours[0].hour + 8
+                    mostActiveHour + 8
                   }:00 UTC.`,
                 },
                 chat.chatConfig.user
