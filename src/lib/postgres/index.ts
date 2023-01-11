@@ -55,11 +55,11 @@ export default class PostgresStats {
       return;
     }
     timestamp = Math.round(timestamp);
-    this.client("song")
+    this.client("songs")
       .where({ song })
       .then((exists) => {
         if (!exists) {
-          this.client("song").insert({ song });
+          this.client("songs").insert({ song });
         }
       });
     return this.client("playing").insert({ uid, timestamp: this.client.raw('to_timestamp(?)', [timestamp]), song });
