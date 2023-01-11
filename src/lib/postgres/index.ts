@@ -14,7 +14,9 @@ const schemas: any = {
 
 export default class PostgresStats {
   client: Knex;
+    isInitialized: boolean;
   constructor() {
+    this.isInitialized = false;
     this.client = knex({
       client: "pg",
       connection: process.env.PG_URI,
@@ -59,17 +61,27 @@ export default class PostgresStats {
         $$ LANGUAGE plpgsql;
         `
     );
+    this.isInitialized = true;
   }
 
   async storeChat(uid: string, timestamp: number) {
+    if (!this.isInitialized) {
+      return;
+    }
     return this.client("chat").insert({ uid, timestamp });
   }
 
   async storePresence(uid: string, timestamp: number) {
+    if (!this.isInitialized) {
+        return;
+    }
     return this.client("presence").insert({ uid, timestamp });
   }
 
   async storePlayer(uid: string, timestamp: number, song: any) {
+    if (!this.isInitialized) {
+        return;
+    }
     this.client("song")
       .where({ song })
       .then((exists) => {
@@ -81,18 +93,31 @@ export default class PostgresStats {
   }
 
   async storeUser(uid: string, optin: boolean) {
+    if (!this.isInitialized) {
+        return;
+    }
     return this.client("users").insert({ uid, optin });
   }
 
   async checkStatus(uid: string) {
+    if (!this.isInitialized) {
+        return;
+    }
     return this.client("users").where({ uid });
   }
 
   async getUser(uid: string, optin: boolean) {
+    if (!this.isInitialized) {
+        return;
+    }
+
     return this.client("users").where({ uid, optin });
   }
 
   async playingHours(uid: string) {
+    if (!this.isInitialized) {
+        return;
+    }
     return this.client.raw(`select
             sum(song.duration) as total
             from playing
@@ -102,6 +127,9 @@ export default class PostgresStats {
   }
 
   async getChatStats(uid: string) {
+    if (!this.isInitialized) {
+        return;
+    }
     return this.client.raw(
       `select * from calculate_time_consumed_and_most_active_hours_single_uid('chat', '${uid}')`
     );
