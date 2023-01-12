@@ -60,7 +60,7 @@ export default class PostgresStats {
       return;
     }
     timestamp = Math.round(timestamp);
-    
+
     await this.client("songs")
       .insert({ ...songObj })
       .onConflict(["url"])
@@ -138,5 +138,30 @@ export default class PostgresStats {
       and a.title is not null
       order by 3 desc`
     );
+  }
+
+  async getOnlinePresence(uid: string) {
+    return this.client.raw(`
+      WITH time_diff AS (
+        SELECT uid, timestamp, lead(timestamp) OVER (PARTITION BY uid ORDER BY timestamp) - timestamp as diff
+        FROM chat
+        WHERE uid = '${uid}'
+        ),
+        hourly_activity AS (
+            SELECT uid, date_trunc('hour', timestamp) as hour, sum(diff) as time_diff
+            FROM time_diff
+            WHERE diff < interval '15 minutes' OR diff IS NULL
+            GROUP BY uid, hour
+        ),
+        max_hourly_activity AS (
+            SELECT uid, max(time_diff) as max_time_diff
+            FROM hourly_activity
+            GROUP BY uid
+        )
+        SELECT ha.uid as calc_uid, SUM(ha.time_diff) as total_time, EXTRACT(HOUR FROM ha.hour) as most_active_hours
+        FROM hourly_activity ha
+        JOIN max_hourly_activity ma ON ha.uid = ma.uid AND ha.time_diff = ma.max_time_diff
+        GROUP BY ha.uid, ha.hour
+        ORDER BY most_active_hours DESC;`);
   }
 }

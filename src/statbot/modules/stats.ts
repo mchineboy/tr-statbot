@@ -3,6 +3,7 @@ export default async function gatherStats(chat: any, message: any) {
   const chatStats = await chat.postgres.getChatStats(message.uid);
   const topSong = await chat.postgres.getTopSong(message.uid);
   const mostLikedSong = await chat.postgres.getMostLikedSong(message.uid);
+  const onlinePresence = await chat.postgres.getOnlinePresence(message.uid);
 
   console.log(`Stats for ${message.username} (${message.uid}) requested.`);
   console.log(JSON.stringify(playingHours, undefined, 2));
@@ -45,6 +46,18 @@ export default async function gatherStats(chat: any, message: any) {
       chatStats.rows[0].total_time.seconds
     }s\n* Your most active hour is ${mostActiveHour}:00 UTC.\n\n`;
   }
+
+  if (onlinePresence && onlinePresence.rows?.length > 0) {
+    chatMsg += `### Online Presence\n\n`;
+    chatMsg += `* You have been online for ${
+      onlinePresence.rows[0].total_time.hours
+    }h ${onlinePresence.rows[0].total_time.minutes < 10 ? "0" : ""}${
+      onlinePresence.rows[0].total_time.minutes
+    }m ${onlinePresence.rows[0].total_time.seconds < 10 ? "0" : ""}${
+      onlinePresence.rows[0].total_time.seconds
+    }s\n\n`;
+  }
+
   chat.pushChatMsg(
     {
       username: chat.chatConfig.username,
