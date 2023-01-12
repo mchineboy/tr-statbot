@@ -3,7 +3,10 @@ export default async function gatherStats(chat: any, message: any) {
   const chatStats = await chat.postgres.getChatStats(message.uid);
   const topSong = await chat.postgres.getTopSong(message.uid);
   const mostLikedSong = await chat.postgres.getMostLikedSong(message.uid);
-  const onlinePresence = await chat.postgres.getOnlinePresence(message.uid);
+  const onlinePresenceRaw = await chat.postgres.getOnlinePresence(message.uid);
+
+  const onlinePresence = breakdownSeconds(onlinePresenceRaw.rows[0].total_elapsed_time);
+  const chatPresence = breakdownSeconds(chatStats.totalTime);
 
   var chatMsg = `==markdown==\n## ${message.username}'s stats\n\n`;
   chatMsg += `### Music\n\n`;
@@ -31,25 +34,27 @@ export default async function gatherStats(chat: any, message: any) {
 
     chatMsg += `### Chat\n\n`;
     chatMsg += `* You have chatted for ${
-      chatStats.rows[0].total_time.hours
-        ? chatStats.rows[0].total_time.hours
-        : "00"
-    }h ${chatStats.rows[0].total_time.minutes < 10 ? "0" : ""}${
-      chatStats.rows[0].total_time.minutes
-    }m ${chatStats.rows[0].total_time.seconds < 10 ? "0" : ""}${
-      chatStats.rows[0].total_time.seconds
-    }s\n* Your most active hour is ${mostActiveHour}:00 UTC.\n\n`;
+        chatPresence.days ? chatPresence.days + "d " : ""
+    }${
+        chatPresence.hours ? chatPresence.hours + "h " : ""
+    }${
+        chatPresence.minutes ? chatPresence.minutes + "m " : ""
+    }${
+        chatPresence.seconds ? chatPresence.seconds + "s " : ""
+    }\n* Your most active hour is ${chatStats.hour}:00 UTC.\n\n`;
   }
 
-  if (onlinePresence && onlinePresence.rows?.length > 0) {
+  if (onlinePresence && Object.keys(onlinePresence).length > 0) {
     chatMsg += `### Online Presence\n\n`;
     chatMsg += `* You have been online for ${
-      onlinePresence.rows[0].total_time.hours ? onlinePresence.rows[0].total_time.hours : "0"
-    }h ${onlinePresence.rows[0].total_time.minutes < 10 ? "0" : ""}${
-      onlinePresence.rows[0].total_time.minutes
-    }m ${onlinePresence.rows[0].total_time.seconds < 10 ? "0" : ""}${
-      onlinePresence.rows[0].total_time.seconds
-    }s\n\n`;
+        onlinePresence.days ? onlinePresence.days + "d " : ""
+    }${
+        onlinePresence.hours ? onlinePresence.hours + "h " : ""
+    }${
+        onlinePresence.minutes ? onlinePresence.minutes + "m " : ""
+    }${
+        onlinePresence.seconds ? onlinePresence.seconds + "s " : ""
+    }\n\n`;
   }
 
   chat.pushChatMsg(
@@ -60,3 +65,20 @@ export default async function gatherStats(chat: any, message: any) {
     chat.chatConfig.user
   );
 }
+
+function breakdownSeconds(totalSeconds: number) {
+    const seconds = totalSeconds % 60;
+    const totalMinutes = (totalSeconds - seconds) / 60;
+    const minutes = totalMinutes % 60;
+    const totalHours = (totalMinutes - minutes) / 60;
+    const hours = totalHours % 24;
+    const days = (totalHours - hours) / 24;
+  
+    return {
+      days: Math.floor(days),
+      hours: Math.floor(hours),
+      minutes: Math.floor(minutes),
+      seconds: Math.floor(seconds)
+    };
+  }
+  

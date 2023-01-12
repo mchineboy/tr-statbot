@@ -67,7 +67,21 @@ export const isCommand = (chat: any, message: any): boolean => {
           });
         return true;
       case ":stats":
-        gatherStats(chat, message);
+        chat.postgres
+          .checkStatus(message.uid)
+          .then((user: { uid: string; optin: boolean }) => {
+            if (user && user.optin) {
+              gatherStats(chat, message);
+            } else {
+              chat.pushChatMsg(
+                {
+                  username: chat.chatConfig.username,
+                  msg: `${message.username}, you are opted out of the statistics system.`,
+                },
+                chat.chatConfig.user
+              );
+            }
+          });
         return true;
     }
   }

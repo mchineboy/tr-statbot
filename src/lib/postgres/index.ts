@@ -112,9 +112,43 @@ export default class PostgresStats {
     if (!this.isInitialized) {
       return;
     }
-    return this.client.raw(
-      `select * from calculate_time_consumed_and_most_active_hours_single_uid('chat', '${uid}')`
+    const totalTime = await this.client.raw(
+      `
+      WITH timestamps AS (
+        SELECT uid, timestamp,
+               LAG(timestamp, 1) OVER (PARTITION BY uid ORDER BY timestamp) AS prev_timestamp
+        FROM chat
+        WHERE uid = '${uid}'
+      )
+      SELECT SUM(EXTRACT(EPOCH FROM timestamp - prev_timestamp)) AS total_elapsed_time
+      FROM timestamps
+      WHERE prev_timestamp IS NOT NULL
+      AND timestamp - prev_timestamp <= INTERVAL '10 minutes';`);
+      
+    const activeHours = await this.client.raw(`
+      WITH timestamps AS (
+        SELECT uid, timestamp,
+               LAG(timestamp, 1) OVER (PARTITION BY uid ORDER BY timestamp) AS prev_timestamp
+        FROM chat
+        WHERE uid = '${uid}'
+      ), elapsed_times AS (
+        SELECT SUM(EXTRACT(EPOCH FROM timestamp - prev_timestamp)) AS total_elapsed_time
+        FROM timestamps
+        WHERE prev_timestamp IS NOT NULL
+        AND timestamp - prev_timestamp <= INTERVAL '10 minutes'
+      )
+      SELECT DATE_TRUNC('hour', timestamp) AS hour, COUNT(*) AS count
+      FROM chat
+      WHERE uid = '${uid}'
+      GROUP BY hour
+      ORDER BY count DESC
+      LIMIT 1
+      `
     );
+    return {
+      totalTime: totalTime.rows[0].total_elapsed_time,
+      activeHours: activeHours.rows[0].hour,
+    }
   }
 
   async getTopSong(uid: string) {
@@ -142,26 +176,15 @@ export default class PostgresStats {
 
   async getOnlinePresence(uid: string) {
     return this.client.raw(`
-      WITH time_diff AS (
-        SELECT uid, timestamp, lead(timestamp) OVER (PARTITION BY uid ORDER BY timestamp) - timestamp as diff
-        FROM chat
-        WHERE uid = '${uid}'
-        ),
-        hourly_activity AS (
-            SELECT uid, date_trunc('hour', timestamp) as hour, sum(diff) as time_diff
-            FROM time_diff
-            WHERE diff < interval '5 minutes' OR diff IS NULL
-            GROUP BY uid, hour
-        ),
-        max_hourly_activity AS (
-            SELECT uid, max(time_diff) as max_time_diff
-            FROM hourly_activity
-            GROUP BY uid
-        )
-        SELECT ha.uid as calc_uid, SUM(ha.time_diff) as total_time, EXTRACT(HOUR FROM ha.hour) as most_active_hours
-        FROM hourly_activity ha
-        JOIN max_hourly_activity ma ON ha.uid = ma.uid AND ha.time_diff = ma.max_time_diff
-        GROUP BY ha.uid, ha.hour
-        ORDER BY most_active_hours DESC;`);
+    WITH timestamps AS (
+      SELECT uid, timestamp,
+             LAG(timestamp, 1) OVER (PARTITION BY uid ORDER BY timestamp) AS prev_timestamp
+      FROM presence
+      WHERE uid = '${uid}'
+    )
+    SELECT SUM(EXTRACT(EPOCH FROM timestamp - prev_timestamp)) AS total_elapsed_time
+    FROM timestamps
+    WHERE prev_timestamp IS NOT NULL
+    AND timestamp - prev_timestamp <= INTERVAL '10 minutes'`);
   }
 }
