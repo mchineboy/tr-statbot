@@ -6,7 +6,7 @@ export default async function gatherStats(chat: any, message: any) {
   const onlinePresenceRaw = await chat.postgres.getOnlinePresence(message.uid);
 
   const onlinePresence = breakdownSeconds(onlinePresenceRaw.rows[0].total_elapsed_time);
-  const chatPresence = breakdownSeconds(chatStats.rows[0].totalTime);
+  const chatPresence = breakdownSeconds(chatStats.totalTime);
 
   var chatMsg = `==markdown==\n## ${message.username}'s stats\n\n`;
   chatMsg += `### Music\n\n`;
