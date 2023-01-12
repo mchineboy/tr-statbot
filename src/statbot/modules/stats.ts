@@ -1,8 +1,8 @@
 export default async function gatherStats(chat: any, message: any) {
   const playingHours = await chat.postgres.playingHours(message.uid);
   const chatStats = await chat.postgres.getChatStats(message.uid);
-  const topSong = chat.postgres.getTopSong(message.uid);
-  const mostLikedSong = chat.postgres.getMostLikedSong(message.uid);
+  const topSong = await chat.postgres.getTopSong(message.uid);
+  const mostLikedSong = await chat.postgres.getMostLikedSong(message.uid);
 
   console.log(`Stats for ${message.username} (${message.uid}) requested.`);
   console.log(JSON.stringify(playingHours, undefined, 2));
