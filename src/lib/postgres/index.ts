@@ -126,6 +126,7 @@ export default class PostgresStats {
       from playing a
       join songs b on a.url = b.url 
      where uid = '${uid}'
+     and a.title is not null
      group by a.url, b.title
      order by plays desc limit 1`
     );
@@ -136,11 +137,12 @@ export default class PostgresStats {
       return;
     }
     return this.client.raw(
-      `select a.url, b.title, (likes + grabs) * hypes as likes
+      `select a.url, b.title, (likes + grabs) * (hypes + 1) as likes
       from playing a
       join songs b on a.url = b.url 
       where a.uid = '${uid}'
-      order by likes desc limit 1`
+      and a.title is not null
+      order by likes desc limit 1;`
     );
   }
 }
