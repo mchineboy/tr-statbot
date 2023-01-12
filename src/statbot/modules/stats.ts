@@ -6,7 +6,7 @@ export default async function gatherStats(chat: any, message: any) {
   const onlinePresenceRaw = await chat.postgres.getOnlinePresence(message.uid);
 
   const onlinePresence = breakdownSeconds(onlinePresenceRaw.rows[0].total_elapsed_time);
-  const chatPresence = breakdownSeconds(chatStats.totalTime);
+  const chatPresence = breakdownSeconds(chatStats.rows[0].totalTime);
 
   var chatMsg = `==markdown==\n## ${message.username}'s stats\n\n`;
   chatMsg += `### Music\n\n`;
@@ -21,11 +21,11 @@ export default async function gatherStats(chat: any, message: any) {
   if (mostLikedSong && mostLikedSong.rows?.length > 0 && mostLikedSong.rows[0].likes > 0)
     chatMsg += `* Your most liked song played is [${mostLikedSong.rows[0].title}](${mostLikedSong.rows[0].url}) with ${mostLikedSong.rows[0].likes} likes.\n\n`;
 
-  if (chatStats && chatStats.rows?.length > 0) {
-    console.log(JSON.stringify(chatStats.rows, undefined, 2));
+  if (chatPresence && Object.keys(chatPresence).length > 0) {
+    console.log(JSON.stringify(chatStats, undefined, 2));
     var mostActiveHour: number;
 
-    mostActiveHour = parseInt(chatStats.rows[0].most_active_hours);
+    mostActiveHour = parseInt(chatStats.activeHours);
     mostActiveHour += 8;
 
     if (mostActiveHour > 24) {
@@ -46,7 +46,7 @@ export default async function gatherStats(chat: any, message: any) {
 
   if (onlinePresence && Object.keys(onlinePresence).length > 0) {
     chatMsg += `### Online Presence\n\n`;
-    chatMsg += `* You have been online for ${
+    chatMsg += `* You have wasted ${
         onlinePresence.days ? onlinePresence.days + "d " : ""
     }${
         onlinePresence.hours ? onlinePresence.hours + "h " : ""
@@ -54,7 +54,7 @@ export default async function gatherStats(chat: any, message: any) {
         onlinePresence.minutes ? onlinePresence.minutes + "m " : ""
     }${
         onlinePresence.seconds ? onlinePresence.seconds + "s " : ""
-    }\n\n`;
+    } on TreesRadio\n\n`;
   }
 
   chat.pushChatMsg(
