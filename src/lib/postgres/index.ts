@@ -165,7 +165,7 @@ export default class PostgresStats {
 
   async getMostLikedSong(uid: string) {
     return this.client.raw(
-      `select a.url, b.title, (likes + grabs) * (hypes + 1) as likes
+      `select a.url, b.title, (likes + grabs) as likes
       from playing a
       join songs b on a.url = b.url 
       where a.uid = '${uid}'
