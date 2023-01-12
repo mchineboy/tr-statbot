@@ -123,7 +123,7 @@ export default class PostgresStats {
       SELECT SUM(EXTRACT(EPOCH FROM timestamp - prev_timestamp)) AS total_elapsed_time
       FROM timestamps
       WHERE prev_timestamp IS NOT NULL
-      AND timestamp - prev_timestamp <= INTERVAL '10 minutes';`);
+      AND timestamp - prev_timestamp <= INTERVAL '5 minutes';`);
       
     const activeHours = await this.client.raw(`
       WITH timestamps AS (
