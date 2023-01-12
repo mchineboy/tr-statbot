@@ -125,9 +125,9 @@ export default class PostgresStats {
       `select a.url, b.title, count(b.title) as plays
       from playing a
       join songs b on a.url = b.url 
-     where uid = ?
+     where uid = '${uid}'
      group by a.url, b.title
-     order by plays desc limit 1`, [uid]
+     order by plays desc limit 1`
     );
   }
 
@@ -139,8 +139,8 @@ export default class PostgresStats {
       `select a.url, b.title, (likes + grabs) * hypes as likes
       from playing a
       join songs b on a.url = b.url 
-      where a.uid = ?
-      order by likes desc limit 1`, [uid]
+      where a.uid = '${uid}'
+      order by likes desc limit 1`
     );
   }
 }
