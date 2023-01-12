@@ -118,9 +118,13 @@ export default class PostgresStats {
   }
 
   async getTopSong(uid: string) {
-    if (!this.isInitialized) {
-      return;
-    }
+    console.log(`select a.url, b.title, count(b.title) as plays
+    from playing a
+    join songs b on a.url = b.url 
+   where uid = '${uid}'
+   and a.title is not null
+   group by a.url, b.title
+   order by plays desc limit 1`)
     return this.client.raw(
       `select a.url, b.title, count(b.title) as plays
       from playing a
@@ -133,9 +137,12 @@ export default class PostgresStats {
   }
 
   async getMostLikedSong(uid: string) {
-    if (!this.isInitialized) {
-      return;
-    }
+    console.log(`select a.url, b.title, (likes + grabs) * (hypes + 1) as likes
+    from playing a
+    join songs b on a.url = b.url 
+    where a.uid = '${uid}'
+    and a.title is not null
+    order by likes desc limit 1;`)
     return this.client.raw(
       `select a.url, b.title, (likes + grabs) * (hypes + 1) as likes
       from playing a
