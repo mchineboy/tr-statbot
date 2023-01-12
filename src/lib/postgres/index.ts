@@ -137,7 +137,7 @@ export default class PostgresStats {
         WHERE prev_timestamp IS NOT NULL
         AND timestamp - prev_timestamp <= INTERVAL '10 minutes'
       )
-      SELECT DATE_TRUNC('hour', timestamp) AS hour, COUNT(*) AS count
+      SELECT EXTRACT(HOUR from timestamp) AS hour, COUNT(*) AS count
       FROM chat
       WHERE uid = '${uid}'
       GROUP BY hour
