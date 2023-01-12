@@ -71,6 +71,7 @@ export const isCommand = (chat: any, message: any): boolean => {
         chat.postgres
           .checkStatus(message.uid)
           .then((user: { uid: string; optin: boolean }) => {
+            console.log(user);
             if (user && user.optin) {
               gatherStats(chat, message);
             } else {
