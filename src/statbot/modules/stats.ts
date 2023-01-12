@@ -19,9 +19,9 @@ export default async function gatherStats(chat: any, message: any) {
       Math.floor(playingHours.rows[0].total / 60 / 1000) % 60 < 10 ? "0" : ""
     }${Math.floor(playingHours.rows[0].total / 60 / 1000) % 60}m of music.\n`;
   if (topSong && topSong.rows?.length > 0)
-    chatMsg += `* Your most played song is ${topSong.rows[0].title} with ${topSong.rows[0].count} plays.\n`;
+    chatMsg += `* Your most played song is ${topSong.rows[0].title} with ${topSong.rows[0].plays} plays.\n`;
   if (mostLikedSong && mostLikedSong.rows?.length > 0)
-    chatMsg += `* Your most liked song played is ${mostLikedSong.rows[0].title} with ${mostLikedSong.rows[0].count} likes.\n\n`;
+    chatMsg += `* Your most liked song played is ${mostLikedSong.rows[0].title} with ${mostLikedSong.rows[0].likes} likes.\n\n`;
 
   if (chatStats && chatStats.rows?.length > 0) {
     console.log(JSON.stringify(chatStats.rows, undefined, 2));
