@@ -13,9 +13,9 @@ export default async function gatherStats(chat: any, message: any) {
     )}h ${
       Math.floor(playingHours.rows[0].total / 60 / 1000) % 60 < 10 ? "0" : ""
     }${Math.floor(playingHours.rows[0].total / 60 / 1000) % 60}m of music.\n`;
-  if (topSong && topSong.rows?.length > 0)
+  if (topSong && topSong.rows?.length > 0 && topSong.rows[0].plays > 1)
     chatMsg += `* Your most played song is [${topSong.rows[0].title}](${topSong.rows[0].url}) with ${topSong.rows[0].plays} plays.\n`;
-  if (mostLikedSong && mostLikedSong.rows?.length > 0)
+  if (mostLikedSong && mostLikedSong.rows?.length > 0 && mostLikedSong.rows[0].likes > 0)
     chatMsg += `* Your most liked song played is [${mostLikedSong.rows[0].title}](${mostLikedSong.rows[0].url}) with ${mostLikedSong.rows[0].likes} likes.\n\n`;
 
   if (chatStats && chatStats.rows?.length > 0) {
@@ -44,7 +44,7 @@ export default async function gatherStats(chat: any, message: any) {
   if (onlinePresence && onlinePresence.rows?.length > 0) {
     chatMsg += `### Online Presence\n\n`;
     chatMsg += `* You have been online for ${
-      onlinePresence.rows[0].total_time.hours
+      onlinePresence.rows[0].total_time.hours ? onlinePresence.rows[0].total_time.hours : "0"
     }h ${onlinePresence.rows[0].total_time.minutes < 10 ? "0" : ""}${
       onlinePresence.rows[0].total_time.minutes
     }m ${onlinePresence.rows[0].total_time.seconds < 10 ? "0" : ""}${

@@ -150,7 +150,7 @@ export default class PostgresStats {
         hourly_activity AS (
             SELECT uid, date_trunc('hour', timestamp) as hour, sum(diff) as time_diff
             FROM time_diff
-            WHERE diff < interval '15 minutes' OR diff IS NULL
+            WHERE diff < interval '5 minutes' OR diff IS NULL
             GROUP BY uid, hour
         ),
         max_hourly_activity AS (
