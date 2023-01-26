@@ -5,7 +5,7 @@
     "strict": true,
     "preserveConstEnums": true,
     "sourceMap": false,
-    "module": "commonjs",
+    "module": "ES2022",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
