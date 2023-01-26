@@ -6,9 +6,9 @@ import PresenceListener from "./modules/presence";
 import PlayerListener from "./modules/playing";
 
 export default async function main() {
-  var patrons: any[] = [];
+  let patrons: any[] = [];
 
-  var patronObservable = ObservableSlim.create(
+  let patronObservable = ObservableSlim.create(
     patrons,
     true,
     (changes: any) => {
@@ -17,7 +17,7 @@ export default async function main() {
   );
 
   const firebase = new Firebase();
-  var database: any;
+  let database: any;
   try {
     database = firebase.fbase.database();
   } catch (error) {
@@ -48,7 +48,7 @@ export default async function main() {
 }
 
 async function updatePatrons(firebase: Firebase) {
-  var patrons: any[] = [];
+  let patrons: any[] = [];
   const newPatrons: { [key: string]: any }[] = [];
   const patreon = new Patreon();
   try {
