@@ -1,9 +1,8 @@
 import StatBot from './statbot';
 
 async function main() {
-  const statbot = StatBot();
+  console.log("Statbot starting @ " + new Date().toUTCString());
+  return StatBot();
 }
 
-main().catch((error) => {
-    console.error(error);
-});
+export default main().catch(console.error);
