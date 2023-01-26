@@ -9,7 +9,7 @@ export default class PatreonAPI {
       CampaignID: process.env.CAMPAIGN_ID!,
     })
 
-    var patrons = await Patreon.FetchPatrons(['active_patron']);
+    let patrons = await Patreon.FetchPatrons(['active_patron']);
 
     console.log(patrons.length);
     Patreon.Authorization({

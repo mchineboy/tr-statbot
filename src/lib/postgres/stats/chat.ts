@@ -37,13 +37,13 @@ const calcStats =  (key: string, values: any[]) =>  {
     hoursOnline: 0,
     activeHours: [],
   };
-  var currTimestamp = 0;
-  var lastTimestamp = 0;
-  var hoursOnline = 0;
-  var activeHours: {[key: number]: number} = {};
+  let currTimestamp = 0;
+  let lastTimestamp = 0;
+  let hoursOnline = 0;
+  let activeHours: {[key: number]: number} = {};
   process.stdout.write("chat total: " + values.length);
 
-  for ( var i = 0; i < values.length; i++ ) {
+  for ( let i = 0; i < values.length; i++ ) {
     if (!values[i]) continue;
     const date = new Date(values[i]);
 

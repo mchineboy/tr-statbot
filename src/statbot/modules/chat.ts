@@ -41,7 +41,7 @@ export default class ChatListener {
   async run() {
     const chat = this.fbase.ref("chat");
     chat.on("child_added", async (snapshot: DataSnapshot) => {
-      var message = snapshot.val();
+      let message = snapshot.val();
       // Ignore messages older than 30 seconds
       // Initial dumps a shitton of messages
       if ( (Date.now()/1000) - message.timestamp  > 30 ) return;
