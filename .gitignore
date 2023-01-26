@@ -1,3 +1,4 @@
+# Build Output + Dependencies
 node_modules
 build
 dist
@@ -15,3 +16,9 @@ pids
 *.seed
 *.pid.lock
 meta.json
+
+# Environment
+.env
+
+# IDE/Editor Configs
+.idea
