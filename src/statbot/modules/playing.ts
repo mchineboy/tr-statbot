@@ -35,7 +35,7 @@ export default class PlayerListener {
       console.log(`[PlayerListener] ${JSON.stringify(message[0], undefined, 2)}`);
       this.postgres.getUser(message[0].uid, true).then((user) => {
         if (user && user.length > 0) {
-          var song: { [key: string]: any };
+          let song: { [key: string]: any };
           
           song = {};
 

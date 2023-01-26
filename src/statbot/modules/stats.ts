@@ -8,7 +8,7 @@ export default async function gatherStats(chat: any, message: any) {
   const onlinePresence = breakdownSeconds(onlinePresenceRaw.rows[0].total_elapsed_time);
   const chatPresence = breakdownSeconds(chatStats.totalTime);
 
-  var chatMsg = `==markdown==\n## ${message.username}'s stats\n\n`;
+  let chatMsg = `==markdown==\n## ${message.username}'s stats\n\n`;
   chatMsg += `### Music\n\n`;
   if (playingHours && playingHours.rows?.length > 0)
     chatMsg += `* You have played ${Math.floor(
@@ -23,7 +23,7 @@ export default async function gatherStats(chat: any, message: any) {
 
   if (chatPresence && Object.keys(chatPresence).length > 0) {
     console.log(JSON.stringify(chatStats, undefined, 2));
-    var mostActiveHour: number;
+    let mostActiveHour: number;
 
     mostActiveHour = parseInt(chatStats.activeHours);
     mostActiveHour += 8;
