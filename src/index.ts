@@ -1,7 +1,6 @@
 import StatBot from './statbot';
-
 async function main() {
-  console.log("Statbot starting @ " + new Date().toUTCString());
+  console.info("Statbot starting @ " + new Date().toUTCString());
   return StatBot();
 }
 

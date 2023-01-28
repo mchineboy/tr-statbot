@@ -1,24 +1,22 @@
-import { Patreon } from '@anitrack/patreon-wrapper'
+import {Patreon} from '@anitrack/patreon-wrapper'
+import {env} from "../env";
 
 export default class PatreonAPI {
 
-  async getPatrons(): Promise<any[]> {
+  async getPatrons() {
     
     Patreon.Authorization({
-      AccessToken: process.env.PATREON_TOKEN!,
-      CampaignID: process.env.CAMPAIGN_ID!,
+      AccessToken: env.PATREON_TOKEN,
+      CampaignID: env.CAMPAIGN_ID,
     })
 
     let patrons = await Patreon.FetchPatrons(['active_patron']);
 
-    console.log(patrons.length);
     Patreon.Authorization({
-      AccessToken: process.env.OF_PATREON_TOKEN!,
-      CampaignID: process.env.OF_CAMPAIGN_ID!,
+      AccessToken: env.OF_PATREON_TOKEN,
+      CampaignID: env.OF_CAMPAIGN_ID,
     })
 
-    patrons = patrons.concat(await Patreon.FetchPatrons(['active_patron']));
-    console.log(patrons.length);
-    return patrons;
+    return patrons.concat(await Patreon.FetchPatrons(['active_patron'])) as typeof patrons;
   }
 }

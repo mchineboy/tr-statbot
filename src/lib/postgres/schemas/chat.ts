@@ -1,7 +1,7 @@
 import { Knex } from "knex";
 
 export default async function Chat(knex: Knex) {
-  console.log("Creating chat table");
+  console.info("Creating chat table");
   await knex.schema.hasTable("chat").then(async (exists) => {
     if (!exists) {
       await knex.schema.createTable("chat", (table) => {

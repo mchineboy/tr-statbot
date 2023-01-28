@@ -1,7 +1,7 @@
 import { Knex } from "knex";
 
 export default async function Presence(knex: Knex) {
-  console.log("Creating presence table");
+  console.info("Creating presence table");
   await knex.schema.hasTable("presence").then(async (exists) => {
     if (!exists) {
       return await knex.schema.createTable("presence", (table) => {

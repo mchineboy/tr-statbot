@@ -24,7 +24,7 @@ export default class PresenceListener {
         clearInterval(waitTimer);
         this.run();
       }
-      console.log("Presence: Waiting for postgres to initialize")
+      console.info("Presence: Waiting for postgres to initialize")
     }, 5000);
   }
 
@@ -36,22 +36,23 @@ export default class PresenceListener {
       if (!message) {
         return;
       }
+
+      let messageKey = Object.keys(message)[0];
+
       const isPatron = this.patrons.some(
         (patron) =>
-          patron.user &&
-          patron.user.uid &&
-          patron.user.uid === Object.keys(message)[0]
+          patron?.user?.uid === messageKey
       );
 
       if (isPatron) {
         this.postgres.getUser(
-            Object.keys(message)[0],
+            messageKey,
             true,
           )
           .then((user) => {
-            if (user && user.length > 0) {
+            if (user?.length) {
               this.postgres.storePresence(
-                Object.keys(message)[0],
+                messageKey,
                 Date.now()/1000,
               );
             }
