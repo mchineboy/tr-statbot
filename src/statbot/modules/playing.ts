@@ -24,39 +24,39 @@ export default class PlayerListener {
         clearInterval(waitTimer);
         this.run();
       }
-      console.log("Playing: Waiting for postgres to initialize")
+      console.info("Playing: Waiting for postgres to initialize")
     }, 5000);
   }
 
-  async run() {
+  async run(): Promise<void> {
     const playing = this.fbase.ref("songhistory");
     playing.on("value", async (snapshot: DataSnapshot) => {
-      const message = snapshot.val();
-      console.log(`[PlayerListener] ${JSON.stringify(message[0], undefined, 2)}`);
-      this.postgres.getUser(message[0].uid, true).then((user) => {
-        if (user && user.length > 0) {
-          let song: { [key: string]: any };
-          
-          song = {};
+      const message = snapshot.val()?.[0];
+      console.info(`[PlayerListener] ${JSON.stringify(message, undefined, 2)}`);
+      this.postgres.getUser(message.uid, true).then((user) => {
+        if (!user?.length) {
+          return;
+        }
 
-          for (const key of ['url', 'title', 'duration', 'channel', 'thumb']) {
-            song[key] = message[0].songObj[key];
-          }
+        let song: Record<string, unknown> = {};
 
-          delete message[0].songObj;
-          const player = message[0];
-          this.postgres
-            .storePlayer(message[0].uid, Date.now() / 1000, player, song)
+        for (const key of ['url', 'title', 'duration', 'channel', 'thumb']) {
+          song[key] = message.songObj[key];
+        }
+
+        delete message.songObj;
+
+        this.postgres
+            .storePlayer(message.uid, Date.now() / 1000, message, song)
             .then((user) => {
-              console.log(
-                `Inserted ID ${JSON.stringify(user)} played: ${JSON.stringify(
-                  message[0],
-                  undefined,
-                  2
-                )}`
+              console.info(
+                  `Inserted ID ${JSON.stringify(user)} played: ${JSON.stringify(
+                      message,
+                      undefined,
+                      2
+                  )}`
               );
             });
-        }
       });
     });
   }

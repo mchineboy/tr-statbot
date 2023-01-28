@@ -3,6 +3,7 @@ import User from "./mongoose/users";
 import Chat, { getChatStats } from "./mongoose/chat";
 import Presence from "./mongoose/presence";
 import Player, { totalPlayingHours } from "./mongoose/playing";
+import {env} from "../env";
 
 process.on("unhandledRejection", (reason, p) => {
   console.error("Unhandled Rejection at: Promise", p, "reason:", reason);
@@ -12,6 +13,9 @@ process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception thrown", err);
 });
 
+/**
+ * @deprecated use postgres module instead
+ */
 export default class MongoDB {
   client?: mongoose.Mongoose;
   constructor() {
@@ -19,10 +23,14 @@ export default class MongoDB {
   }
 
   async main() {
-    this.client = await mongoose.connect(process.env.MONGODB_URI!, {
+    if (!env.MONGODB_URI) {
+      throw Error("Can't use the MongoDB-Adapter without setting the MONGODB_URI env variable!")
+    }
+
+    this.client = await mongoose.connect(env.MONGODB_URI, {
       waitQueueTimeoutMS: 30000,
     });
-    console.log(`MongoDB? ${this.client.connection.readyState}`);
+    console.info(`MongoDB? ${this.client.connection.readyState}`);
   }
 
   async checkStatus(uid: string) {

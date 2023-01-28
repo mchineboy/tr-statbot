@@ -1,9 +1,4 @@
 import { Knex } from "knex";
-const options = {
-  map: ``,
-  out: { inline: 1 },
-  verbose: true,
-};
 
 type ReducedChat = {
   uid: string;
@@ -26,12 +21,12 @@ const getChatStats = async (client: Knex, uid: string): Promise<ReducedChat> => 
     { uid} ).andWhere(function() {
       this.where('timestamp', ">", Date.now()/1000-2592000)  
     }).orderBy('timestamp', 'asc');
-  return calcStats(uid, results.map((r: IChatStats) => r.timestamp));
+  return calcStats(uid, results.map((r: IChatStats) => r.timestamp!));
 };
 
 export default getChatStats;
 
-const calcStats =  (key: string, values: any[]) =>  {
+const calcStats =  (key: string, values:  number[]) =>  {
   const reducedObj: ReducedChat = {
     uid: key,
     hoursOnline: 0,

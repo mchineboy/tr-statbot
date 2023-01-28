@@ -1,7 +1,7 @@
 import { Knex } from "knex";
 
 export default async function Users(knex: Knex) {
-  console.log("Creating users table");
+  console.info("Creating users table");
   await knex.schema.hasTable("users").then(async (exists) => {
     if (!exists) {
       return await knex.schema.createTable("users", (table) => {

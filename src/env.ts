@@ -29,7 +29,7 @@ if (!_env.success) {
         color`❌ ${"red"}Invalid environment variables:${'reset'}\n`,
         ...formatErrors(_env.error.format()),
     );
-    throw new Error('Invalid environment variables');
+    process.exit(1);
 }
 
 export const env = {..._env.data};
