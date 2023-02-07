@@ -21,4 +21,7 @@ export interface ChatMessage {
   title: string;
   uid: string;
   username: string;
+  mentions?: string[];
+  replyTo?: string;
+  replyMsg?: string;
 }
