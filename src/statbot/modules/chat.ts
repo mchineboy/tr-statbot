@@ -1,114 +1,127 @@
-import {Database} from "firebase-admin/lib/database/database";
-import {DataSnapshot} from "firebase-admin/lib/database";
-import ObservableSlim from "observable-slim";
-import type Firebase from "../../lib/firebase";
-import Postgres from "../../lib/postgres";
-import {isCommand} from "./commands";
+import { DataSnapshot } from "firebase-admin/lib/database";
+import { ChatMessage, PatronInfo } from "../../model";
+import { BehaviorSubject } from "rxjs";
+import { Listener } from "./index";
+import gatherStats from "./stats";
+import type PostgresStats from "../../lib/postgres";
+import { firebase } from "../../lib/firebase";
 
-type Patron = { user: { uid: string } };
+const commandNames = ["ping", "pong", "optin", "optout", "status", "stats"] as const;
 
-export default class ChatListener  {
-    fbase: Database;
-    patrons: Patron[];
-    fbase_class: Firebase;
+type CommandName = (typeof commandNames)[number];
+type Command = `:${CommandName}`;
 
-    chatConfig = {
-        username: "StatBot",
-        user: "StatBot",
-    };
-    postgres: Postgres;
+export default class ChatListener extends Listener {
+  public static readonly MENTION_PATTERN = /\B@[a-z0-9_-]+/gi;
 
-    constructor(
-        fbase_class: Firebase,
-        fbase: Database,
-        patrons: Patron[],
-        patronObservable: ProxyConstructor
-    ) {
-        this.fbase = fbase;
-        this.patrons = patrons;
-        this.fbase_class = fbase_class;
-        ObservableSlim.observe(patronObservable, (changes: any) => {
-            this.patrons = changes.target;
-        });
-        this.postgres = new Postgres();
-        const waitTimer = setInterval(() => {
-            if (this.postgres.isInitialized) {
-                clearInterval(waitTimer);
-                this.run();
-            }
-            console.info("Chat: Waiting for postgres to initialize")
-        }, 5000);
+  private readonly botname = "StatBot";
+
+  constructor( postgres: PostgresStats, patrons: BehaviorSubject<PatronInfo[]>) {
+    super("Chat", postgres, patrons);
+  }
+
+  public listen() {
+    super.listen();
+    const chat = firebase.database().ref("chat");
+    chat.on("child_added", (snap) => this.onSnapshot(snap));
+    this.pushChatMsg("StatBot Online!");
+  }
+
+  public async pushChatMsg(msg: string) {
+    if (!msg || !msg.trim().length) {
+      return;
     }
 
-    async run() {
-        const chat = this.fbase.ref("chat");
-        chat.on("child_added", async (snapshot: DataSnapshot) => {
-            let message = snapshot.val();
-            // Ignore messages older than 30 seconds
-            // Initial dumps a shitton of messages
-            if ((Date.now() / 1000) - message.timestamp > 30) return;
+    firebase.database().ref("chat").push({
+      username: this.botname,
+      uid: this.botname.toUpperCase(),
+      msg,
+      mentions: [],
+      timestamp: Date.now() / 1000,
+      title: "Bot",
+      silenced: false,
+      bot: true,
+      adminOnly: false,
+      isemote: false,
+      replyTo: null,
+      replyMsg: null,
+    });
+  }
 
-            console.info(`[ChatListener] ${JSON.stringify(message, undefined, 2)}`);
-            if (!message) return;
-            const isPatron = this.patrons.some(
-                (patron) => patron?.user?.uid === message.uid
-            );
-
-            if (!isPatron) {
-                console.info(`[ChatListener] Ignoring non-patron message: ${message.msg}`);
-                return;
-            }
-
-            if (isCommand(this, message)) {
-                return;
-            }
-
-            this.postgres.getUser(message.uid, true).then((user) => {
-                if (user && user.length > 0) {
-                    this.postgres.storeChat(message.uid, message.timestamp);
-                }
-            });
-        });
-        this.pushChatMsg({username: "StatBot", msg: "StatBot Online!"}, "StatBot");
+  private async onSnapshot(snapshot: DataSnapshot) {
+    const message = snapshot.val() as ChatMessage;
+    // Ignore messages older than 30 seconds
+    // Initial dumps a shitton of messages
+    if (!message || Date.now() / 1000 - message.timestamp > 30 || ChatListener.isCommand(message)) {
+      return;
     }
 
-    async pushChatMsg({username, msg}: ChatMessage, botName: string) {
-        let uid, title, bot, silenced, isemote;
+    const isPatron = this.patrons?.some((patron) => patron && patron.user?.uid === message.uid);
 
-        if (!msg || msg.trim().length == 0) return;
-
-        if (botName) {
-            username = botName;
-            uid = botName.toUpperCase();
-            title = "Bot";
-            bot = true;
-            silenced = false;
-            isemote = false;
-        }
-
-        this.fbase.ref("chat").push({
-            username,
-            uid,
-            msg,
-            mentions: [],
-            timestamp: Date.now() / 1000,
-            title,
-            silenced,
-            bot,
-            adminOnly: false,
-            isemote,
-            replyTo: null,
-            replyMsg: null,
-        });
+    if (!isPatron) {
+      this.info( `Ignoring non-patron message: ${message.msg}`);
+      return;
     }
-}
 
-export interface ChatMessage {
-    user?: any;
-    username: string;
-    msg: string;
-    mentions?: string[];
-    replyTo?: string;
-    replyMsg?: string;
-    bot?: boolean;
+    const { msg } = message;
+
+    switch (msg.slice(0, msg.indexOf(" ")) as Command) {
+      case ":ping":
+        this.pushChatMsg("pong");
+        break;
+      case ":pong":
+        this.pushChatMsg("ping");
+        break;
+      case ":optin":
+        this.postgres.storeUserStatus(message.uid, true);
+        this.pushChatMsg(
+          `${message.username}, you have opted in to the statistics system.` +
+            "Note: statistics is a patreon perk. If you are not a patron, you will be opted out in 24 hours."
+        );
+
+        this.info(`User ${message.uid} opted in.`, "🆕");
+        break;
+      case ":optout":
+        this.postgres.storeUserStatus(message.uid, false);
+        this.pushChatMsg("You have opted out of the statistics system.");
+        this.info(`User ${message.uid} opted out.`, "⏏️");
+        break;
+      case ":status":
+        this.postgres.checkStatus(message.uid).then(({ optin }) => {
+          this.pushChatMsg(
+            `${message.username}, you are opted ${
+              optin ? "in to" : "out of"
+            } the statistics system.`
+          );
+        });
+        break;
+      case ":stats":
+        this.postgres.checkStatus(message.uid).then(({ optin }) => {
+          if (optin) {
+            gatherStats(this, message);
+            return;
+          }
+          this.pushChatMsg(`${message.username}, you are opted out of the statistics system.`);
+        });
+        break;
+      default:
+        return;
+    }
+
+    this.postgres.getUser(message.uid, true).then((user) => {
+      if (user?.length) {
+        this.postgres.storeChat(message.uid, message.timestamp);
+      }
+    });
+  }
+
+  public static isCommand(message: ChatMessage): boolean {
+    const { msg } = message;
+    const spaceIndex = msg.indexOf(" ");
+
+    return (
+      msg.startsWith(":") &&
+      commandNames.includes(msg.slice(1, spaceIndex > 0 ? spaceIndex : undefined) as CommandName)
+    );
+  }
 }

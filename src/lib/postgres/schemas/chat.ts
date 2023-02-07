@@ -1,7 +1,8 @@
 import { Knex } from "knex";
+import { formatInfo } from "../../util/console-helper";
 
 export default async function Chat(knex: Knex) {
-  console.info("Creating chat table");
+  formatInfo('Postgres', 'Creating chat table','💬')
   await knex.schema.hasTable("chat").then(async (exists) => {
     if (!exists) {
       await knex.schema.createTable("chat", (table) => {
@@ -17,5 +18,4 @@ export default async function Chat(knex: Knex) {
       });
     }
   });
-  return true;
 }

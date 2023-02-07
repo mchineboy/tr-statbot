@@ -1,7 +1,8 @@
 import { Knex } from "knex";
+import { formatInfo } from "../../util/console-helper";
 
 export default async function Playing(knex: Knex) {
-  console.info("Creating playing table");
+  formatInfo('Postgres', 'Creating playing table','⏯️')
   await knex.schema.hasTable("songs").then(async (exists) => {
     if (!exists) {
       await knex.schema.createTable("songs", (table) => {

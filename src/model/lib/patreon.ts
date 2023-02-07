@@ -1,3 +1,5 @@
+export type PatronInfo = { patron?: PatronType; user: { uid: string } };
+
 export type PatronType = {
     displayId: string
     displayName: string

@@ -1,4 +1,5 @@
 /*
+* @deprecated, enums in typescript behave in some weird ways so we just use a Record instea
 export const enum Rank {
   BOT = -1,
   USER,
@@ -26,7 +27,9 @@ export const Rank = {
 
 export type DatabaseRank = "Bot" | "Frient" | "VIP" | "Mod" | "Senior Mod" | "Florida Man" | "Dev" | "Admin";
 
-export type RankKey = keyof typeof Rank;
-export type RankValue = typeof Rank[keyof typeof Rank];
+type RankType = typeof Rank;
 
-export type RankOf<T extends RankKey> = typeof Rank[T];
+export type RankKey = keyof RankType;
+export type RankValue = RankType[RankKey];
+
+export type RankOf<T extends RankKey> = RankType[T];
