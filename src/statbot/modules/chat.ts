@@ -68,7 +68,7 @@ export default class ChatListener extends Listener {
 
     const { msg } = message;
 
-    this.info(`Received message: ${msg}`);
+    this.info(`Received message: ${msg} ${msg.slice(0, msg.indexOf(" "))}`);
     
     switch (msg.slice(0, msg.indexOf(" ")) as Command) {
       case ":ping":
