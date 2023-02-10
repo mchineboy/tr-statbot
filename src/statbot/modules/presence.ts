@@ -1,61 +1,35 @@
 import { DataSnapshot } from "firebase-admin/database";
-import { Database } from "firebase-admin/lib/database/database";
-import ObservableSlim from "observable-slim";
-import Postgres from "../../lib/postgres";
+import { BehaviorSubject } from "rxjs";
+import { PatronInfo } from "../../model";
+import { Listener } from "./index";
+import type PostgresStats from "../../lib/postgres";
+import { firebase } from "../../lib/firebase";
 
-export default class PresenceListener {
-  fbase: Database;
-  patrons: any[];
-  postgres: Postgres;
-
-  constructor(
-    fbase: Database,
-    patrons: any[],
-    patronObservable: ProxyConstructor
-  ) {
-    this.fbase = fbase;
-    this.patrons = patrons;
-    ObservableSlim.observe(patronObservable, (changes: any) => {
-      this.patrons = changes.target;
-    });
-    this.postgres = new Postgres();
-    const waitTimer = setInterval(() => {
-      if (this.postgres.isInitialized) {
-        clearInterval(waitTimer);
-        this.run();
-      }
-      console.log("Presence: Waiting for postgres to initialize")
-    }, 5000);
+export default class PresenceListener extends Listener {
+  constructor(postgres: PostgresStats, patrons: BehaviorSubject<PatronInfo[]>) {
+    super("Presence", postgres, patrons);
   }
 
-  async run() {
-    const presence = this.fbase.ref("presence");
+  async listen() {
+    super.listen();
+    const presence = firebase.database().ref("presence");
     presence.on("value", async (snapshot: DataSnapshot) => {
       const message = snapshot.val();
 
       if (!message) {
         return;
       }
-      const isPatron = this.patrons.some(
-        (patron) =>
-          patron.user &&
-          patron.user.uid &&
-          patron.user.uid === Object.keys(message)[0]
-      );
+
+      const messageKey = Object.keys(message)[0];
+
+      const isPatron = this.patrons.some((patron) => patron?.user?.uid === messageKey);
 
       if (isPatron) {
-        this.postgres.getUser(
-            Object.keys(message)[0],
-            true,
-          )
-          .then((user) => {
-            if (user && user.length > 0) {
-              this.postgres.storePresence(
-                Object.keys(message)[0],
-                Date.now()/1000,
-              );
-            }
-          });
+        this.postgres.getUser(messageKey, true).then((user) => {
+          if (user?.length) {
+            this.postgres.storePresence(messageKey, Date.now() / 1000);
+          }
+        });
       }
     });
   }
