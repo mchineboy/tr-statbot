@@ -37,6 +37,14 @@ if (!_env.success) {
   fail(...formatErrors(_env.error.format()));
 }
 
+// Production stores the service account as a BASE64 encoded string
+
+try {
+  _env.data.FBASE_SERVICE = Buffer.from(_env.data.FBASE_SERVICE, "base64").toString();
+} catch (e) {
+  // ignore
+}
+
 try {
   JSON.parse(_env.data.FBASE_SERVICE);
 } catch (e) {
