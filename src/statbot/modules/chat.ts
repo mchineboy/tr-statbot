@@ -53,11 +53,12 @@ export default class ChatListener extends Listener {
     // Ignore messages older than 30 seconds
     // Initial dumps a shitton of messages
     this.info(`Received message: ${message.msg} from ${message.username} at ${message.timestamp}`);
-    if (!message || Date.now() / 1000 - message.timestamp > 30 || ChatListener.isCommand(message)) {
+
+    if (!message || Date.now() / 1000 - message.timestamp > 30 || !ChatListener.isCommand(message)) {
       return;
     }
 
-    
+
     const isPatron = this.patrons?.some((patron) => patron && patron.user?.uid === message.uid);
 
     if (!isPatron) {
