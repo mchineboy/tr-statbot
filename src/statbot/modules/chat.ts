@@ -67,10 +67,9 @@ export default class ChatListener extends Listener {
     }
 
     const { msg } = message;
-
-    this.info(`Received message: ${msg} ${msg.slice(0, msg.indexOf(" "))}`);
     
-    switch (msg.slice(0, msg.indexOf(" ")) as Command) {
+    // Most commands do not have a space after the command name ;)
+    switch (msg.split(' ')[0] as Command) {
       case ":ping":
         this.pushChatMsg("pong");
         break;
