@@ -52,6 +52,7 @@ export default class ChatListener extends Listener {
     const message = snapshot.val() as ChatMessage;
     // Ignore messages older than 30 seconds
     // Initial dumps a shitton of messages
+    this.info(`Received message: ${message.msg} from ${message.username} at ${message.timestamp}`);
     if (!message || Date.now() / 1000 - message.timestamp > 30 || ChatListener.isCommand(message)) {
       return;
     }
@@ -65,6 +66,8 @@ export default class ChatListener extends Listener {
 
     const { msg } = message;
 
+    this.info(`Received message: ${msg}`);
+    
     switch (msg.slice(0, msg.indexOf(" ")) as Command) {
       case ":ping":
         this.pushChatMsg("pong");
