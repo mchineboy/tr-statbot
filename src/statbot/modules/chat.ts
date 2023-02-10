@@ -57,6 +57,7 @@ export default class ChatListener extends Listener {
       return;
     }
 
+    
     const isPatron = this.patrons?.some((patron) => patron && patron.user?.uid === message.uid);
 
     if (!isPatron) {

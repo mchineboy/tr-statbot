@@ -104,5 +104,6 @@ async function updatePatrons(): Promise<PatronInfo[]> {
   } catch (error) {
     log.error(JSON.stringify(error));
   }
+  log.info(`Found ${newPatrons.length} patrons`);
   return newPatrons;
 }
