@@ -12,7 +12,8 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src"]
 }
