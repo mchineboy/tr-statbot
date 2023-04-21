@@ -18,7 +18,12 @@ export default async function gatherStats(chat: ChatListener, message: ChatMessa
 
   if (playingHours?.rows?.length) {
     const { total } = playingHours.rows[0];
-    chatMsg += `* You have played ${getPlayingHours(total)}h ${getPlayingMinutesString(total)}m of music.\n`;
+    // total is a time value in ms
+    // We need to make it into hours and minutes
+    const hours = Math.floor(total / 60 / 60 / 1000);
+    const minutes = Math.floor(total / 60 / 1000) % 60;
+
+    chatMsg += `* You have played ${hours}h ${minutes}m of music.\n`;
   }
 
   if (topSong?.rows?.length && topSong.rows[0].plays > 1) {
