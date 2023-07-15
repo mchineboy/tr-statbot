@@ -27,13 +27,16 @@
     "vite-node": "^0.33.0"
   },
   "dependencies": {
+    "@esbuild-plugins/node-resolve": "^0.2.2",
     "dotenv": "^16.3.1",
     "dotenv-expand": "^10.0.0",
     "firebase-admin": "^11.10.1",
+    "install": "^0.13.0",
     "knex": "^2.5.1",
     "pg": "^8.11.1",
     "prisma": "^5.0.0",
     "rxjs": "^7.8.1",
+    "source-map-support": "^0.5.21",
     "zod": "^3.21.4"
   },
   "prettier": {

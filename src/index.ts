@@ -1,3 +1,4 @@
+import 'source-map-support/register';
 import StatBot from "./statbot";
 import * as logger from "./lib/util/console-helper";
 

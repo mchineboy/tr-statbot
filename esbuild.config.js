@@ -1,4 +1,5 @@
 import { build } from 'esbuild';
+import { NodeResolvePlugin } from '@esbuild-plugins/node-resolve'
 // imprt {  } from 'esbuild-node-tsc';
 
 build({
@@ -21,5 +22,18 @@ build({
         "pg-query-stream"
     ],
     platform: 'node',
+    plugins: [
+        NodeResolvePlugin({
+            extensions: ['.ts', '.js'],
+            onResolved: (resolved) => {
+                if (resolved.includes('node_modules')) {
+                    return {
+                        external: true,
+                    }
+                }
+                return resolved
+            },
+        }),
+    ],
     target: 'node18',
 }).catch(() => process.exit(1));
