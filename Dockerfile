@@ -6,6 +6,6 @@ COPY ./dist/* .
 COPY ./.env* .
 
 COPY package.json .
-RUN npm install --production
+RUN npm install --omit=dev
 
 ENTRYPOINT ["node", "index.js"]
