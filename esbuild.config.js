@@ -6,8 +6,7 @@ build({
     entryPoints: ['src/index.ts'],
     bundle: true,
     treeShaking: false,
-
-    minify: true,
+    minify: false,
     sourcemap: true,
     outfile: 'dist/index.js',
     // plugins: [nodeResolvePlugin()],
