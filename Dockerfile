@@ -6,6 +6,6 @@ COPY ./dist/* .
 COPY ./.env* .
 
 COPY package.json .
-RUN pnpm install --production
+RUN npm install --production
 
 ENTRYPOINT ["node", "index.js"]
