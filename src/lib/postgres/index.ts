@@ -191,15 +191,6 @@ export default class PostgresStats extends Logger {
   }
 
   async getOnlinePresence(uid: string) {
-    return this.client.raw(`
-        WITH timestamps AS (SELECT uid,
-                                   timestamp,
-                                   LAG(timestamp, 1) OVER (PARTITION BY uid ORDER BY timestamp) AS prev_timestamp
-                            FROM presence
-                            WHERE uid = '${uid}')
-        SELECT SUM(EXTRACT(EPOCH FROM timestamp - prev_timestamp)) AS total_elapsed_time
-        FROM timestamps
-        WHERE prev_timestamp IS NOT NULL
-          AND timestamp - prev_timestamp <= INTERVAL '10 minutes'`);
+    return this.client.raw(`select calculate_presence_duration(${uid});`);
   }
 }

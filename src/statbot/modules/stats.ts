@@ -62,9 +62,11 @@ export default async function gatherStats(chat: ChatListener, message: ChatMessa
 }
 
 const getPlayingHours = (ms: number): number => Math.floor(ms / 60 / 60 / 1000);
+console.log(getPlayingHours(1000 * 60 * 60 * 24 * 7));
 const getPlayingMinutes = (ms: number): number => Math.floor(ms / 60 / 60 / 1000);
 const determineTrailingZero = (ms: number): string => (Math.floor(ms / 60 / 1000) % 60 < 10 ? "0" : "");
 const getPlayingMinutesString = (ms: number): string => determineTrailingZero(ms) + getPlayingMinutes(ms);
+console.log(getPlayingMinutesString(1000 * 60 * 60 * 24 * 7));
 
 const formatDurationBreakdown = ({ days, hours, minutes, seconds }: DurationBreakdown): string =>
   "" +
