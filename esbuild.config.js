@@ -5,7 +5,7 @@ import { NodeResolvePlugin } from '@esbuild-plugins/node-resolve'
 build({
     entryPoints: ['src/index.ts'],
     bundle: true,
-    treeShaking: true,
+    treeShaking: false,
 
     minify: true,
     sourcemap: true,
