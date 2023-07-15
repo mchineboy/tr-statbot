@@ -73,11 +73,13 @@ jobs:
       
       - name: Update rancher deployment
         uses: th0th/rancher-redeploy-workload@v0.9.3
-        env: 
-          RANCHER_BEARER_TOKEN: ${{ secrets.RANCHER_BEARER_TOKEN }}
-          RANCHER_CLUSTER_ID: 'local'
-          RANCHER_NAMESPACE: 'treesradio'
-          RANCHER_PROJECT_ID: ${{ secrets.RANCHER_PROJECT_ID }}
-          RANCHER_URL: ${{ secrets.RANCHER_URL }}
-          RANCHER_WORKLOADS: 'tr-statbot-deployment'
-          DEBUG: true
+        with: 
+          debug: 'true'
+          disable_output: 'false'
+          rancher_bearer_token: '${{ secrets.RANCHER_BEARER_TOKEN }}'
+          rancher_cluster_id: 'local'
+          rancher_namespace: 'treesradio'
+          rancher_project_id: '${{ secrets.RANCHER_PROJECT_ID }}'
+          rancher_url: '${{ secrets.RANCHER_URL }}'
+          rancher_workloads: 'tr-statbot-deployment'
+          tls_skip_verification: 'true'
