@@ -8,7 +8,7 @@ export type PatronType = {
     subscription: {
         note: string
         currentEntitled: {
-            status: 'active_patron' | 'declined_patron'
+            status: 'active_patron' | 'declined_patron' | 'former_patron'
             tier: {
                 id: string
                 title: string

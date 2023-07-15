@@ -20,7 +20,13 @@ export default async function main() {
 
   patrons.next(await updatePatrons());
 
-  const patreonPoll = setInterval(() => updatePatrons().then(patrons.next), 1000 * 60 * 60);
+  const patreonPoll = setInterval(async () => {
+    try {
+      patrons.next(await updatePatrons());
+    } catch (err) {
+      console.trace(err);
+    }
+  }, 1000 * 60 * 60);
 
   const listeners = [
     new ChatListener(postgres, patrons),
