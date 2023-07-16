@@ -25,10 +25,7 @@ export default async function gatherStats(chat: ChatListener, message: ChatMessa
   );
 
   const onlinePresence =
-    onlinePresenceRaw &&
-    breakdownSeconds(
-      onlinePresenceRaw.rows[0].totalseconds,
-    );
+    onlinePresenceRaw && breakdownSeconds(onlinePresenceRaw.rows[0].totalseconds);
   const chatPresence = chatStats && breakdownSeconds(chatStats.totalTime);
 
   let chatMsg = `==markdown==\n## ${username}'s stats\n\n`;
@@ -88,14 +85,23 @@ const getPlayingMinutesString = (ms: number): string =>
   determineTrailingZero(ms) + getPlayingMinutes(ms);
 console.log(getPlayingMinutesString(1000 * 60 * 60 * 24 * 7));
 
-const formatDurationBreakdown = ({ days, hours, minutes, seconds }: DurationBreakdown): string =>
+const formatDurationBreakdown = ({ years, weeks, days, hours, minutes, seconds }: DurationBreakdown): string =>
   "" +
+  (years ? years + "y " : "") +
+  (weeks ? weeks + "w " : "") +
   (days ? days + "d " : "") +
   (hours ? hours + "h " : "") +
   (minutes ? minutes + "m " : "") +
   (seconds ? seconds + "s " : "");
 
-type DurationBreakdown = { days: number; hours: number; minutes: number; seconds: number };
+type DurationBreakdown = {
+  years: number;
+  weeks: number;
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+};
 
 function breakdownSeconds(totalSeconds: number): DurationBreakdown {
   const seconds = totalSeconds % 60;
@@ -103,9 +109,16 @@ function breakdownSeconds(totalSeconds: number): DurationBreakdown {
   const minutes = totalMinutes % 60;
   const totalHours = (totalMinutes - minutes) / 60;
   const hours = totalHours % 24;
-  const days = (totalHours - hours) / 24;
+  const totalDays = (totalHours - hours) / 24;
+  const days = totalDays % 7;
+  const totalWeeks = Math.floor(days / 7);
+  const weeks = totalWeeks % 52;
+  const totalYears = Math.floor(days / 365);
+  const years = totalYears;
 
   return {
+    years: Math.floor(years),
+    weeks: Math.floor(weeks),
     days: Math.floor(days),
     hours: Math.floor(hours),
     minutes: Math.floor(minutes),
