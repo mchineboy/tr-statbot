@@ -16,6 +16,7 @@ export default async function gatherStats(chat: ChatListener, message: ChatMessa
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   log.info(
     dye`${"green"}Raw presence stats for ${username}... ${JSON.stringify(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onlinePresenceRaw.rows.map((r: any) => r),
       null,
       2,
@@ -26,9 +27,7 @@ export default async function gatherStats(chat: ChatListener, message: ChatMessa
   const onlinePresence =
     onlinePresenceRaw &&
     breakdownSeconds(
-      onlinePresenceRaw.rows[0].total.hours * 60 * 60 +
-        onlinePresenceRaw.rows[0].total.minutes * 60 +
-        onlinePresenceRaw.rows[0].total.seconds,
+      onlinePresenceRaw.rows[0].totalseconds,
     );
   const chatPresence = chatStats && breakdownSeconds(chatStats.totalTime);
 
