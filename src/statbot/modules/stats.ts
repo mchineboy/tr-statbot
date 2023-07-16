@@ -14,9 +14,22 @@ export default async function gatherStats(chat: ChatListener, message: ChatMessa
   const onlinePresenceRaw = await chat.postgres.getOnlinePresence(uid);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  log.info(dye`${"green"}Raw presence stats for ${username}... ${JSON.stringify(onlinePresenceRaw.rows.map((r: any) => r), null, 2)}`, "📊");
+  log.info(
+    dye`${"green"}Raw presence stats for ${username}... ${JSON.stringify(
+      onlinePresenceRaw.rows.map((r: any) => r),
+      null,
+      2,
+    )}`,
+    "📊",
+  );
 
-  const onlinePresence = onlinePresenceRaw && breakdownSeconds(onlinePresenceRaw.rows[0].total_elapsed_time);
+  const onlinePresence =
+    onlinePresenceRaw &&
+    breakdownSeconds(
+      onlinePresenceRaw.rows[0].total.hours * 60 * 60 +
+        onlinePresenceRaw.rows[0].total.minutes * 60 +
+        onlinePresenceRaw.rows[0].total.seconds,
+    );
   const chatPresence = chatStats && breakdownSeconds(chatStats.totalTime);
 
   let chatMsg = `==markdown==\n## ${username}'s stats\n\n`;
@@ -55,7 +68,7 @@ export default async function gatherStats(chat: ChatListener, message: ChatMessa
 
     chatMsg += `### Chat\n\n`;
     chatMsg += `* You have chatted for ${formatDurationBreakdown(
-      chatPresence
+      chatPresence,
     )}\n* Your most active hour is ${mostActiveHour}:00 UTC.\n\n`;
   }
 
@@ -70,8 +83,10 @@ export default async function gatherStats(chat: ChatListener, message: ChatMessa
 const getPlayingHours = (ms: number): number => Math.floor(ms / 60 / 60 / 1000);
 console.log(getPlayingHours(1000 * 60 * 60 * 24 * 7));
 const getPlayingMinutes = (ms: number): number => Math.floor(ms / 60 / 60 / 1000);
-const determineTrailingZero = (ms: number): string => (Math.floor(ms / 60 / 1000) % 60 < 10 ? "0" : "");
-const getPlayingMinutesString = (ms: number): string => determineTrailingZero(ms) + getPlayingMinutes(ms);
+const determineTrailingZero = (ms: number): string =>
+  Math.floor(ms / 60 / 1000) % 60 < 10 ? "0" : "";
+const getPlayingMinutesString = (ms: number): string =>
+  determineTrailingZero(ms) + getPlayingMinutes(ms);
 console.log(getPlayingMinutesString(1000 * 60 * 60 * 24 * 7));
 
 const formatDurationBreakdown = ({ days, hours, minutes, seconds }: DurationBreakdown): string =>
