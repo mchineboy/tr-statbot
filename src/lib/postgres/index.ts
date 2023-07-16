@@ -190,7 +190,7 @@ export default class PostgresStats extends Logger {
     );
   }
 
-  async getOnlinePresence(uid: string) {
-    return this.client.raw(`select calculate_presence_duration('${uid}');`);
+  async getOnlinePresence(uid: string): Promise<Knex.Raw<unknown>> {
+    return this.client.raw(`select calculate_presence_duration('${uid}') as total;`);
   }
 }

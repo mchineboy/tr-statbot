@@ -1,5 +1,8 @@
 import ChatListener from "./chat";
 import { ChatMessage } from "../../model";
+import { dye, Logger } from "../../lib/util/console-helper";
+
+const log = new Logger("Statbot");
 
 export default async function gatherStats(chat: ChatListener, message: ChatMessage) {
   const { uid, username } = message;
@@ -9,6 +12,9 @@ export default async function gatherStats(chat: ChatListener, message: ChatMessa
   const topSong = await chat.postgres.getTopSong(uid);
   const mostLikedSong = await chat.postgres.getMostLikedSong(uid);
   const onlinePresenceRaw = await chat.postgres.getOnlinePresence(uid);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  log.info(dye`${"green"}Raw presence stats for ${username}... ${onlinePresenceRaw.rows.map((r: any) => r)}`, "📊");
 
   const onlinePresence = onlinePresenceRaw && breakdownSeconds(onlinePresenceRaw.rows[0].total_elapsed_time);
   const chatPresence = chatStats && breakdownSeconds(chatStats.totalTime);
