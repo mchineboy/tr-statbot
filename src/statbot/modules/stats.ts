@@ -14,7 +14,7 @@ export default async function gatherStats(chat: ChatListener, message: ChatMessa
   const onlinePresenceRaw = await chat.postgres.getOnlinePresence(uid);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  log.info(dye`${"green"}Raw presence stats for ${username}... ${onlinePresenceRaw.rows.map((r: any) => r)}`, "📊");
+  log.info(dye`${"green"}Raw presence stats for ${username}... ${JSON.stringify(onlinePresenceRaw.rows.map((r: any) => r), null, 2)}`, "📊");
 
   const onlinePresence = onlinePresenceRaw && breakdownSeconds(onlinePresenceRaw.rows[0].total_elapsed_time);
   const chatPresence = chatStats && breakdownSeconds(chatStats.totalTime);
