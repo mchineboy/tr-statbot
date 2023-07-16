@@ -113,9 +113,14 @@ function breakdownSeconds(totalSeconds: number): DurationBreakdown {
   const days = totalDays % 7;
   const totalWeeks = Math.floor(days / 7);
   const weeks = totalWeeks % 52;
-  const totalYears = Math.floor(days / 365);
+  const totalYears = Math.floor(days / 365.25);
   const years = totalYears;
 
+  log.info(
+    dye`${"green"}Total seconds: ${totalSeconds} | Years: ${years} | Weeks: ${weeks} | Days: ${days} | Hours: ${hours} | Minutes: ${minutes} | Seconds: ${seconds}`,
+    "📊",
+  );
+  
   return {
     years: Math.floor(years),
     weeks: Math.floor(weeks),
