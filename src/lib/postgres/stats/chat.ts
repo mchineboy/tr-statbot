@@ -17,16 +17,21 @@ interface IChatStats {
 }
 
 const getChatStats = async (client: Knex, uid: string): Promise<ReducedChat> => {
-  const results = await client('chat').where(
-    { uid} ).andWhere(function() {
-      this.where('timestamp', ">", Date.now()/1000-2592000)  
-    }).orderBy('timestamp', 'asc');
-  return calcStats(uid, results.map((r: IChatStats) => r.timestamp as number));
+  const results = await client("chat")
+    .where({ uid })
+    .andWhere(function () {
+      this.where("timestamp", ">", Date.now() / 1000 - 2592000);
+    })
+    .orderBy("timestamp", "asc");
+  return calcStats(
+    uid,
+    results.map((r: IChatStats) => r.timestamp as number),
+  );
 };
 
 export default getChatStats;
 
-const calcStats =  (key: string, values:  number[]) =>  {
+const calcStats = (key: string, values: number[]) => {
   const reducedObj: ReducedChat = {
     uid: key,
     hoursOnline: 0,
@@ -34,14 +39,15 @@ const calcStats =  (key: string, values:  number[]) =>  {
   };
   let currTimestamp = 0;
   let lastTimestamp = 0;
-  let hoursOnline = 0;
-  const activeHours: {[key: number]: number} = {};
+  let startTimestamp = 0;
 
-  for ( let i = 0; i < values.length; i++ ) {
+  const activeHours: { [key: number]: number } = {};
+
+  for (let i = 0; i < values.length; i++) {
     if (!values[i]) continue;
     const date = new Date(values[i]);
 
-    if ( Number.isNaN(date.getHours())) continue;
+    if (Number.isNaN(date.getHours())) continue;
 
     activeHours[date.getHours()]
       ? activeHours[date.getHours()]++
@@ -51,20 +57,22 @@ const calcStats =  (key: string, values:  number[]) =>  {
       lastTimestamp = values[i];
     }
 
+    if (startTimestamp === 0) {
+      startTimestamp = values[i];
+    }
+
     currTimestamp = values[i];
 
     if (currTimestamp - lastTimestamp > 300) {
-      reducedObj.hoursOnline += hoursOnline;
-      hoursOnline = 0;
+      reducedObj.hoursOnline += (lastTimestamp - startTimestamp) / 3600;
       lastTimestamp = currTimestamp;
       continue;
     }
 
-    hoursOnline = hoursOnline + (currTimestamp - lastTimestamp);
     lastTimestamp = currTimestamp;
   }
 
-  reducedObj.hoursOnline = reducedObj.hoursOnline + hoursOnline;
+  reducedObj.hoursOnline = reducedObj.hoursOnline + (currTimestamp - startTimestamp) / 3600;
 
   for (const hour in activeHours) {
     reducedObj.activeHours.push({
@@ -76,4 +84,4 @@ const calcStats =  (key: string, values:  number[]) =>  {
   reducedObj.activeHours.sort((a, b) => b.count - a.count);
 
   return reducedObj;
-}
+};
