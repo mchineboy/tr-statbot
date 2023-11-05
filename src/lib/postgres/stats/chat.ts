@@ -65,8 +65,7 @@ const calcStats = (key: string, values: number[]) => {
 
     if (currTimestamp - lastTimestamp > 300) {
       reducedObj.hoursOnline += (lastTimestamp - startTimestamp) / 3600;
-      lastTimestamp = currTimestamp;
-      continue;
+      startTimestamp = currTimestamp;
     }
 
     lastTimestamp = currTimestamp;
