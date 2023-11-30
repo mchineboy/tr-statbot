@@ -97,6 +97,9 @@ export default class ChatListener extends Listener {
               optin ? "in to" : "out of"
             } the statistics system.`
           );
+        }).catch((err) => {
+          this.error(err);
+          this.pushChatMsg("Sorry, something went wrong. Please try again later.");
         });
         break;
       case ":stats":
@@ -106,6 +109,9 @@ export default class ChatListener extends Listener {
             return;
           }
           this.pushChatMsg(`${message.username}, you are opted out of the statistics system.`);
+        }).catch((err) => {
+          this.error(err);
+          this.pushChatMsg("Sorry, something went wrong. Please try again later.");
         });
         break;
       default:
