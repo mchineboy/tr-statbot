@@ -18,14 +18,15 @@ export const Rank = {
     USER: 0,
     FRIENT: 1,
     VIP: 2,
-    MOD: 3,
-    FLORIDA_MAN: 4,
-    SENIOR_MOD: 5,
-    DEV: 6,
-    ADMIN: 7,
+    SHRUBBER: 3,
+    MOD: 4,
+    FLORIDA_MAN: 5,
+    SENIOR_MOD: 6,
+    DEV: 7,
+    ADMIN: 8,
 } as const;
 
-export type DatabaseRank = "Bot" | "Frient" | "VIP" | "Mod" | "Senior Mod" | "Florida Man" | "Dev" | "Admin";
+export type DatabaseRank = "Bot" | "Frient" | "VIP" | "Shrubber" | "Mod" | "Senior Mod" | "Florida Man" | "Dev" | "Admin";
 
 type RankType = typeof Rank;
 

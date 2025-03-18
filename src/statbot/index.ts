@@ -4,17 +4,18 @@ import PresenceListener from "./modules/presence";
 import PlayerListener from "./modules/playing";
 import { PatronInfo, PatronType } from "../model";
 import { BehaviorSubject } from "rxjs";
-import Postgres from "../lib/postgres";
+import FirestoreStats from "../lib/firestore-stats";
 import { dye, Logger } from "../lib/util/console-helper";
 import { auth } from "firebase-admin";
 import UserRecord = auth.UserRecord;
 import { getPatrons } from "../lib/patreon";
+import { AttributeItem, RelationshipMainItemAttributes, Type } from "../lib/patreon";
 
 const log = new Logger("Statbot");
 
 export default async function main() {
-  log.info(dye`${"orange"}Waiting for postgres to initialize...`, "⏳");
-  const postgres = new Postgres();
+  log.info(dye`${"orange"}Initializing Firestore...`, "⏳");
+  const firestoreStats = new FirestoreStats();
 
   const patrons = new BehaviorSubject<PatronInfo[]>([]);
 
@@ -26,17 +27,17 @@ export default async function main() {
     } catch (err) {
       console.trace(err);
     }
-  }, 1000 * 60 * 60);
+  }, 1000 * 60 * 60); // Update patrons list every hour
 
   const listeners = [
-    new ChatListener(postgres, patrons),
-    new PresenceListener(postgres, patrons),
-    new PlayerListener(postgres, patrons),
+    new ChatListener(firestoreStats, patrons),
+    new PresenceListener(firestoreStats, patrons),
+    new PlayerListener(firestoreStats, patrons),
   ] as const;
 
   const waitTimer = setInterval(() => {
-    if (postgres.isInitialized) {
-      log.info(dye`${"green"}Postgres initialization complete!`, "✅");
+    if (firestoreStats.isInitialized) {
+      log.info(dye`${"green"}Firestore initialization complete!`, "✅");
       clearInterval(waitTimer);
       listeners.forEach((l) => l.listen());
     }
@@ -46,7 +47,7 @@ export default async function main() {
 }
 
 async function updatePatrons(): Promise<PatronInfo[]> {
-  let patrons: PatronType[] = [];
+  let patrons: AttributeItem<Type.Member, RelationshipMainItemAttributes<Type.Member, never, never>>[] = [];
   const newPatrons: PatronInfo[] = [];
   try {
     patrons = await getPatrons();
@@ -86,27 +87,32 @@ async function updatePatrons(): Promise<PatronInfo[]> {
     };
 
     for (const patron of patrons) {
-      const auth = firebase.auth();
-      if (uidsByUsernames[patron.displayName.trim().toUpperCase()]) {
-        const uid = uidsByUsernames[patron.displayName.trim().toUpperCase()];
-        await auth
-          .getUser(uid)
-          .then((u) => pushPatron(u, patron, uid))
-          .catch(() =>
-            auth
-              .getUserByEmail(patron.emailAddress)
-              .then((u) => pushPatron(u, patron, uid))
-              .catch(() =>
-                log.warn(
-                  dye`${"red"}Failed to connect user ${uid} with patron ${
-                    patron.displayName
-                  }, skipping...`,
-                  "⏩"
-                )
-              )
-          );
-      }
+      // We have to parse out attributes with "title" and "value"
+      console.log(patron.attributes);
     }
+
+    // for (const patron of patrons) {
+    //   const auth = firebase.auth();
+    //   if (uidsByUsernames[patron.attributes]) {
+    //     const uid = uidsByUsernames[patron.displayName.trim().toUpperCase()];
+    //     await auth
+    //       .getUser(uid)
+    //       .then((u) => pushPatron(u, patron, uid))
+    //       .catch(() =>
+    //         auth
+    //           .getUserByEmail(patron.emailAddress)
+    //           .then((u) => pushPatron(u, patron, uid))
+    //           .catch(() =>
+    //             log.warn(
+    //               dye`${"red"}Failed to connect user ${uid} with patron ${
+    //                 patron.displayName
+    //               }, skipping...`,
+    //               "⏩"
+    //             )
+    //           )
+    //       );
+    //   }
+    // }
   } catch (error) {
     log.error(JSON.stringify(error));
   }

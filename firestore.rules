@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Only allow authenticated service account to access Firestore data
+    // These collections should only be accessed via the StatBot function
+    match /{document=**} {
+      allow read, write: if request.auth != null && request.auth.token.email.matches('.*@.*.gserviceaccount.com$');
+    }
+  }
+}

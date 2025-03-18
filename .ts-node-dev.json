@@ -1,0 +1,6 @@
+{
+    "transpileOnly": true,
+    "ignore": ["node_modules"],
+    "files": true,
+    "debug": false
+  }

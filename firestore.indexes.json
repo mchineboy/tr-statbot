@@ -1,0 +1,37 @@
+{
+    "indexes": [
+      {
+        "collectionGroup": "chat",
+        "queryScope": "COLLECTION",
+        "fields": [
+          { "fieldPath": "uid", "order": "ASCENDING" },
+          { "fieldPath": "timestamp", "order": "ASCENDING" }
+        ]
+      },
+      {
+        "collectionGroup": "chat",
+        "queryScope": "COLLECTION",
+        "fields": [
+          { "fieldPath": "uid", "order": "ASCENDING" },
+          { "fieldPath": "timestamp", "order": "DESCENDING" }
+        ]
+      },
+      {
+        "collectionGroup": "presence",
+        "queryScope": "COLLECTION",
+        "fields": [
+          { "fieldPath": "uid", "order": "ASCENDING" },
+          { "fieldPath": "timestamp", "order": "ASCENDING" }
+        ]
+      },
+      {
+        "collectionGroup": "playing",
+        "queryScope": "COLLECTION",
+        "fields": [
+          { "fieldPath": "uid", "order": "ASCENDING" },
+          { "fieldPath": "title", "order": "ASCENDING" }
+        ]
+      }
+    ],
+    "fieldOverrides": []
+  }

@@ -1,16 +1,16 @@
 import { PatronInfo } from "../../model";
 import { BehaviorSubject, Subscription } from "rxjs";
-import Postgres from "../../lib/postgres";
+import FirestoreStats from "../../lib/firestore-stats";
 import { dye, Logger } from "../../lib/util/console-helper";
 
 export abstract class Listener extends Logger {
   protected patrons: PatronInfo[];
 
-  protected patronSubscription: Subscription;
+  patronSubscription: Subscription;
 
   protected constructor(
     name: string,
-    public postgres: Postgres,
+    public firestore: FirestoreStats,
     patrons: BehaviorSubject<PatronInfo[]>
   ) {
     super(name + "Listener");

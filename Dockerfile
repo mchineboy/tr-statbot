@@ -1,8 +1,18 @@
-FROM node:18-alpine
+FROM node:22-slim
 
-COPY ./dist/* .
+WORKDIR /app
 
-# Avoid a situation where .env isn't needed (Tyler's k8s setup)
-COPY ./.env* .
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-ENTRYPOINT ["node", "index.js"]
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy source code
+COPY . .
+
+# Build TypeScript
+RUN npm run build
+
+# Command to run the app
+CMD ["node", "dist/index.js"]

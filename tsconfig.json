@@ -1,19 +1,25 @@
 {
   "compilerOptions": {
-    "target": "es2022",
-    "outDir": "dist",
-    "strict": true,
-    "preserveConstEnums": true,
-    "sourceMap": false,
-    "module": "ES2022",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2022",
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": ".",
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "allowSyntheticDefaultImports": true
+    "paths": {
+      "*": ["node_modules/*"]
+    },
+    "strict": true,
+    "resolveJsonModule": true
   },
-  "include": ["src"]
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["**/node_modules/**", "node_modules", "dist"]
 }

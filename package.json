@@ -1,67 +1,40 @@
 {
-  "author": {
-    "name": "Tyler Hardison",
-    "email": "tyler@seraphnet.com"
+  "name": "statbot",
+  "version": "1.0.0",
+  "description": "Statistics bot for TreesRadio",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/ index.ts",
+    "docker:build": "docker build -t statbot .",
+    "docker:run": "docker run -p 8080:8080 --env-file .env statbot"
   },
-  "name": "tr-statbot",
-  "description": "A simple bot for tracking statistics in TreesRadio",
-  "type": "module",
-  "ts-node": {
-    "files": true
-  },
-  "devDependencies": {
-    "@anitrack/patreon-wrapper": "^1.5.2",
-    "@firebase/app-types": "^0.9.0",
-    "@types/node": "^20.10.1",
-    "@typescript-eslint/eslint-plugin": "^6.13.1",
-    "@typescript-eslint/parser": "^6.13.1",
-    "esbuild": "^0.19.8",
-    "esbuild-node-tsc": "^2.0.5",
-    "eslint": "^8.54.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "prettier": "^3.1.0",
-    "prettier-plugin-prisma": "^5.0.0",
-    "typescript": "^5.3.2",
-    "vite": "^5.0.4",
-    "vite-node": "^0.34.6"
+  "engines": {
+    "node": "22"
   },
   "dependencies": {
-    "@esbuild-plugins/node-resolve": "^0.2.2",
+    "@anitrack/patreon-wrapper": "^1.0.7",
     "dotenv": "^16.3.1",
-    "dotenv-expand": "^10.0.0",
-    "firebase-admin": "^11.11.1",
-    "install": "^0.13.0",
-    "knex": "^3.0.1",
-    "pg": "^8.11.3",
+    "dotenv-expand": "12.0.1",
+    "express": "5.0.0",
+    "firebase-admin": "13.2.0",
+    "firebase-functions": "6.3.2",
+    "knex": "^3.1.0",
+    "patreon": "^0.4.1",
+    "patreon-api.ts": "^0.11.0",
     "rxjs": "^7.8.1",
     "source-map-support": "^0.5.21",
-    "zod": "^3.22.4"
+    "zod": "^3.22.2"
   },
-  "prettier": {
-    "printWidth": 100,
-    "arrowParens": "always",
-    "plugins": [
-      "prettier-plugin-prisma"
-    ]
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "22.13.10",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
   },
-  "esbuild": {
-    "external": [
-      "sqlite3",
-      "better-sqlite3",
-      "tedious",
-      "mysql2",
-      "oracledb",
-      "pg-native"
-    ]
-  },
-  "scripts": {
-    "dev": "vite-node src/index.ts --watch",
-    "dev:docker": "docker-compose -f docker-compose.dev.yml up",
-    "start": "node ./dist/index.js",
-    "build": "node esbuild.config.js",
-    "build:docker": "pnpm build && docker-compose -f docker-compose.dev.yml build",
-    "stop:docker": "docker-compose -f docker-compose.dev.yml down",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  }
+  "private": true
 }

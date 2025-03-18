@@ -7,11 +7,11 @@ const log = new Logger("Statbot");
 export default async function gatherStats(chat: ChatListener, message: ChatMessage) {
   const { uid, username } = message;
 
-  const chatStats = await chat.postgres.getChatStats(uid);
-  const playingHours = await chat.postgres.playingHours(uid);
-  const topSong = await chat.postgres.getTopSong(uid);
-  const mostLikedSong = await chat.postgres.getMostLikedSong(uid);
-  const onlinePresenceRaw = await chat.postgres.getOnlinePresence(uid);
+  const chatStats = await chat.firestore.getChatStats(uid);
+  const playingHours = await chat.firestore.playingHours(uid);
+  const topSong = await chat.firestore.getTopSong(uid);
+  const mostLikedSong = await chat.firestore.getMostLikedSong(uid);
+  const onlinePresenceRaw = await chat.firestore.getOnlinePresence(uid);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   log.info(
@@ -55,7 +55,7 @@ export default async function gatherStats(chat: ChatListener, message: ChatMessa
     console.info(JSON.stringify(chatStats, undefined, 2));
     let mostActiveHour: number;
 
-    mostActiveHour = parseInt(chatStats.activeHours);
+    mostActiveHour = parseInt(chatStats.activeHours.toString());
     mostActiveHour += 8;
 
     if (mostActiveHour > 24) {
@@ -75,15 +75,6 @@ export default async function gatherStats(chat: ChatListener, message: ChatMessa
 
   chat.pushChatMsg(chatMsg);
 }
-
-const getPlayingHours = (ms: number): number => Math.floor(ms / 60 / 60 / 1000);
-console.log(getPlayingHours(1000 * 60 * 60 * 24 * 7));
-const getPlayingMinutes = (ms: number): number => Math.floor(ms / 60 / 60 / 1000);
-const determineTrailingZero = (ms: number): string =>
-  Math.floor(ms / 60 / 1000) % 60 < 10 ? "0" : "";
-const getPlayingMinutesString = (ms: number): string =>
-  determineTrailingZero(ms) + getPlayingMinutes(ms);
-console.log(getPlayingMinutesString(1000 * 60 * 60 * 24 * 7));
 
 const formatDurationBreakdown = ({ years, weeks, days, hours, minutes, seconds }: DurationBreakdown): string =>
   "" +

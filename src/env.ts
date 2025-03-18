@@ -14,12 +14,11 @@ dotenv.config();
  */
 export const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production"]),
-  PG_URI: zh.string().nonEmpty().url("Must be a valid URL!"),
   FBASE_SERVICE: zh.string().nonEmpty(),
-  PATREON_TOKEN: zh.string().nonEmpty(),
-  CAMPAIGN_ID: zh.string().nonEmpty(),
-  OF_PATREON_TOKEN: zh.string().nonEmpty(),
-  OF_CAMPAIGN_ID: zh.string().nonEmpty(),
+  PATREON_CLIENT_ID: zh.string().nonEmpty(),
+  PATREON_CLIENT_SECRET: zh.string().nonEmpty(),
+  PATREON_ACCESS_TOKEN: zh.string().nonEmpty(),
+  PATREON_REFRESH_TOKEN: zh.string().nonEmpty(),
 });
 
 // expand variable references in .env variables

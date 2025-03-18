@@ -1,18 +1,42 @@
-import { Patreon } from "@anitrack/patreon-wrapper";
+import { PatreonCreatorClient } from 'patreon-api.ts'
 import { env } from "../env";
 
-export async function getPatrons() {
-  Patreon.Authorization({
-    AccessToken: env.PATREON_TOKEN,
-    CampaignID: env.CAMPAIGN_ID,
-  });
+var client: PatreonCreatorClient;
 
-  const patrons = await Patreon.FetchPatrons(["active_patron"]);
+async function getClient() {
 
-  Patreon.Authorization({
-    AccessToken: env.OF_PATREON_TOKEN,
-    CampaignID: env.OF_CAMPAIGN_ID,
-  });
+  if (!client) {
+    client = new PatreonCreatorClient({
+      oauth: {
+          clientId: env.PATREON_CLIENT_ID,
+          clientSecret: env.PATREON_CLIENT_SECRET,
+          token: {
+              access_token: env.PATREON_ACCESS_TOKEN,
+              refresh_token: env.PATREON_REFRESH_TOKEN,
+          }
+      },
+      rest: {
+          fetch: (url, init) => {
+              console.log(`[${init.method}] ${url}`)
+              if (init.body) console.log(init.body)
 
-  return patrons.concat(await Patreon.FetchPatrons(["active_patron"])) as typeof patrons;
+              return fetch(url, init)
+          }
+      }
+  })
+  }
+  return client;
 }
+
+export async function getPatrons() {
+ 
+  const client = await getClient();
+  const campaign = await client.fetchCampaigns();
+  // Get the first campaign
+  const thisCampaign = campaign.data[0];
+  const patrons = await client.fetchCampaignMembers(thisCampaign.id);
+  return patrons.data;
+}
+
+// Export the types from patreon-api.ts
+export { type AttributeItem, type RelationshipMainItemAttributes, type Type } from 'patreon-api.ts'

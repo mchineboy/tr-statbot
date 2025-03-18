@@ -2,12 +2,12 @@ import { DataSnapshot } from "firebase-admin/database";
 import { BehaviorSubject } from "rxjs";
 import { PatronInfo } from "../../model";
 import { Listener } from "./index";
-import type PostgresStats from "../../lib/postgres";
+import type FirestoreStats from "../../lib/firestore-stats";
 import { firebase } from "../../lib/firebase";
 
 export default class PresenceListener extends Listener {
-  constructor(postgres: PostgresStats, patrons: BehaviorSubject<PatronInfo[]>) {
-    super("Presence", postgres, patrons);
+  constructor(firestore: FirestoreStats, patrons: BehaviorSubject<PatronInfo[]>) {
+    super("Presence", firestore, patrons);
   }
 
   async listen() {
@@ -25,9 +25,9 @@ export default class PresenceListener extends Listener {
       const isPatron = this.patrons.some((patron) => patron?.user?.uid === messageKey);
 
       if (isPatron) {
-        this.postgres.getUser(messageKey, true).then((user) => {
+        this.firestore.getUser(messageKey, true).then((user) => {
           if (user?.length) {
-            this.postgres.storePresence(messageKey, Date.now() / 1000);
+            this.firestore.storePresence(messageKey, Date.now() / 1000);
           }
         });
       }

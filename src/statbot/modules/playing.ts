@@ -2,12 +2,12 @@ import { DataSnapshot } from "firebase-admin/database";
 import { Listener } from "./index";
 import { BehaviorSubject } from "rxjs";
 import { PatronInfo } from "../../model";
-import type PostgresStats from "../../lib/postgres";
+import type FirestoreStats from "../../lib/firestore-stats";
 import { firebase } from "../../lib/firebase";
 
 export default class PlayerListener extends Listener {
-  constructor(postgres: PostgresStats, patrons: BehaviorSubject<PatronInfo[]>) {
-    super("Playing", postgres, patrons);
+  constructor(firestore: FirestoreStats, patrons: BehaviorSubject<PatronInfo[]>) {
+    super("Playing", firestore, patrons);
   }
 
   async listen(): Promise<void> {
@@ -16,22 +16,27 @@ export default class PlayerListener extends Listener {
     playing.on("value", async (snapshot: DataSnapshot) => {
       const message = snapshot.val()?.[0];
       this.info(JSON.stringify(message, undefined, 2));
-      this.postgres.getUser(message.uid, true).then((user) => {
+      this.firestore.getUser(message.uid, true).then((user) => {
         if (!user?.length) {
           return;
         }
 
-        const song: Record<string, unknown> = {};
+        const songObj: Record<string, unknown> = {};
 
         for (const key of ["url", "title", "duration", "channel", "thumb"]) {
-          song[key] = message.songObj[key];
+          songObj[key] = message.songObj[key];
         }
 
-        delete message.songObj;
-
-        this.postgres.storePlayer(message.uid, Date.now() / 1000, message, song).then((user) => {
+        // Create a copy of the message object without the songObj property
+        const messageCopy = { ...message };
+        delete messageCopy.songObj;
+        
+        console.log(messageCopy);
+        
+        // Call storePlayer with parameters in the correct order
+        this.firestore.storePlayer(messageCopy.uid, Date.now() / 1000, messageCopy, songObj).then((docRef) => {
           this.info(
-            `Inserted ID ${JSON.stringify(user)} played: ${JSON.stringify(message, undefined, 2)}`
+            `Inserted document: ${docRef.id} for song: ${JSON.stringify(messageCopy, undefined, 2)}`
           );
         });
       });
