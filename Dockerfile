@@ -4,15 +4,17 @@ WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
+COPY pnpm-lock.yaml ./
 
+RUN npm install -g pnpm
 # Install dependencies
-RUN npm ci --only=production
+RUN pnpm i --frozen-lockfile
 
 # Copy source code
 COPY . .
-
+EXPOSE 8080
 # Build TypeScript
-RUN npm run build
+RUN pnpm run build
 
 # Command to run the app
 CMD ["node", "dist/index.js"]

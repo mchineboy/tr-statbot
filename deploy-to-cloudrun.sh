@@ -9,6 +9,7 @@ REGION="us-central1"
 # Build and push the Docker image to Google Container Registry
 gcloud builds submit --tag gcr.io/$PROJECT_ID/$SERVICE_NAME
 
+source .env
 # Deploy to Cloud Run
 gcloud run deploy $SERVICE_NAME \
   --image gcr.io/$PROJECT_ID/$SERVICE_NAME \
@@ -19,7 +20,7 @@ gcloud run deploy $SERVICE_NAME \
   --min-instances 1 \
   --max-instances 1 \
   --no-allow-unauthenticated \
-  --set-env-vars "NODE_ENV=production"
+  --env-vars-file .env.yaml
 
 echo "Deployment complete!"
 echo "The service will remain running continuously even without traffic."

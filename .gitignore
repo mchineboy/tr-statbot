@@ -22,3 +22,5 @@ meta.json
 
 # IDE/Editor Configs
 .idea
+env.prod
+.env.yaml
