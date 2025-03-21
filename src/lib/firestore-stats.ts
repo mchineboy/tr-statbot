@@ -1,5 +1,5 @@
 import { firestore } from "./firestore";
-import { dye, Logger } from "../lib/util/console-helper";
+import { dye, Logger } from "./util/console-helper";
 import { firestore as FirebaseFirestore } from "firebase-admin";
 
 type UserStatus = { uid: string; optin: boolean };
